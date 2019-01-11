@@ -1,0 +1,198 @@
+1. Determine what kind of app to build (social, ecommerce, etc...)
+-For example, a social app where users can upload posts to predefined topics (topics).
+
+2. Data
+-Determine tables needed
+--> user
+--> post
+--> topic
+--> topicfollowing
+--> comment
+--> like
+-Determine columns needed for each table
+--> user (id, username, email, password, description, imageurl, datecreated, dateedited)
+--> post (id, name, description, imageurl, datecreated, dateedited, userid, topicid)
+--> topic (id, name, description, imageurl, datecreated, dateedited)
+--> topicfollowing (id, following, followed, datecreated, dateedited)
+--> comment (id, description, datecreated, dateedited, userid, postid)
+--> like (id, like, liked, datecreated, dateedited)
+-Determine relationships between tables (one to one, one to many, many to many)
+--> user and post (one to many)
+--> topicfollowing (many to many)
+--> user and comment (one to many)
+--> like (many to many)
+--> topic and post (one to many)
+--> post and comment (one to many)
+-Determine DBMS to use (MySQL, PostgreSQL, etc...)
+--> MySQL
+-Write and execute SQL code to build tables as aforementioned
+-Write Javascript code using tools such as faker, request, and cheerio to generate sample data (Automation)
+-->use faker to produce sample data
+-->use request and cheerio to scrap data from the Web
+
+3. Setup local environment
+3.1 Nginx web server running locally at ports 80 and 443
+--> Setup Nginx configurations
+---> Configure nginx.conf so all 80 traffic are redirected to 443
+---> 443 traffic are handled based on hostname
+----> Requests toward www.gif67.com and gif67.com are redirected to app server at port 3001
+----> Requests toward api.gif67.com are redirected to API server at port 3002
+----> Other 443 requests are redirected to an error page or app server at port 3001
+----> Setup sites-available folder so for each website there is a corresponding config file
+----> Setup sites-enabled so for each website there is a corresponding symlink
+----> Test Nginx with -t parameter, restart Nginx web server, and ensure Nginx web server is running
+
+3.2 -Use express to generate a project folder containing code related to application
+--> Within this project, define routes, controllers, models, views, .env file, and other config files
+---> Routes
+----> user
+      - /users/new GET
+      - /users POST
+      - /users/id GET
+      - /users GET (Disabled)
+      - /users/id/following GET
+      - /users/id/edit GET
+      - /users/id PUT
+      - /users/id DELETE
+      image
+      - /images/new GET
+      - /images POST
+      - /images/id GET
+      - /images GET (Disabled)
+      - /images/id/edit GET (Disabled)
+      - /images/id PUT (Disabled)
+      - /images/id DELETE
+      topic
+      - /topics/new GET (Disabled)
+      - /topics POST (Disabled)
+      - /topics/id GET
+      - /topics GET
+      - /topics/id/followers GET
+      - /topics/id/edit GET (Disabled)
+      - /topics/id PUT (Disabled)
+      - /topics/id DELETE (Disabled)
+      topicfollowing
+      - /topicfollowings/new GET (Replaced by follow button on topic page)
+      - /topicfollowings POST
+      - /topicfollowings/id GET (Disabled)
+      - /topicfollowings GET (Disabled)
+      - /topicfollowings/id/edit GET (Disabled)
+      - /topicfollowings/id PUT (Disabled)
+      - /topicfollowings/id DELETE
+      other routes
+      - /login GET
+      - /login POST
+      - /logout GET
+      - /403 GET
+      - /404 GET
+---> Controllers (Defined for each route)
+---> Models(ORM) / SQL
+---> Views (Defined for each route)
+----> Repeated views (new.ejs, show.ejs, index.ejs, edit.ejs, index.ejs, indexfeed.ejs, followers.ejs, following.ejs,
+403.ejs, 404.ejs, header.ejs, footer.ejs, login.ejs)
+---> .env file containing credentials needed for local environment (database credentials, AWS credentials)
+---> Place stylesheets and scripts (include AJAX scripts to handle follow/unfollow topic, loading more
+ images for each topic/user from API server, loading more followers for each topic from API server
+ , loading more following for each user from API server) into public folder
+- Setup Git to add, commit, and push code into Github repository regularly
+- Setup this application so it is served locally at port 3001
+
+3.3 -Use loopback4 to generate a project folder containing code related to API
+--> Within this project, define routes, controllers, models, views, .env file, and other config files
+--> These components are similar to those from application above and are mostly automated through
+wizard setup
+--> Use wizard setup to quickly setup an API for user, image, topic, and topicfollowing tables (include routes,
+controllers, models, views)
+---> .env file containing credentials needed for local environment (database credentials)
+- Setup Git to add, commit, and push code into Github repository regularly
+- Setup this application so it is served locally at port 3002
+
+3.4 DBMS server (MySQL) running locally at port 3306
+
+3.5
+- Define a VPC locally consisting of Nginx web server at ports 80 and 443,
+Nodejs server at port 3001 for application, Nodejs server at port 3002 for API,
+and DBMS server at port 3306
+- Make sure the components are working together
+- Test application
+- Use Git to add, commit, and push code into GitHub prior to deployment to AWS
+
+4. Setup production environment
+4.1 Setup AWS account
+4.2 Purchase domains from Route 53 (www.gif67.com and api.gif67.com)
+ and link them to public IP (get an elastic IP and
+ associate it with an EC2 instance)
+4.3 Setup VPC through wizard consisting of public and private subnets
+4.4 Define security groups to protect Nginx web server (80 from *, 443 from *, and 22 from own IP), app servers (3000
+from Nginx web server, 22 from web server), db server (3306 from app servers and own IP to import dumped MySQL
+files that were previously exported and saved at local environment so data structure and data are synced)
+4.5 Setup an EC2 instance and setup Nginx on it
+--> Configure nginx.conf so nginx runs on ports 80 and 443, redirect all 80 traffic to
+443 and for 443 traffic handle traffic based on hostname
+--> Requests toward www.gif67.com and gif67.com are redirected to app server at a different private ip on port 3000
+--> Requests toward api.gif67.com are redirected to API server at a different private ip on port 3000
+--> Other 443 requests are redirected to an error page or app server at a different private ip on port 3000
+--> Setup sites-available folder so for each website there is a corresponding config file
+--> Setup sites-enabled so for each website there is a corresponding symlink
+--> Test Nginx with -t parameter, restart Nginx web server, and ensure Nginx web server is running
+4.6 Setup an EC2 instance and setup Nodejs, NPM, Git, and PM2 on it
+--> Use Git to clone application from GitHub, use NPM to install dependencies, setup .env file to
+contain credentials (database credentials, AWS credentials), adjust bin/www so app runs at port 3000 at 0.0.0.0, and
+use PM2 to serve app 24/7 (ensure app is running)
+4.7 Setup an EC2 instance and setup Nodejs, NPM, Git, and PM2 on it
+--> Use Git to clone API from GitHub, use NPM to install dependencies, setup .env file to
+contain credentials (database credentials, AWS credentials), adjust bin/www so app runs at port 3000 at 0.0.0.0, and
+use PM2 to serve app 24/7 (ensure app is running)
+4.8 Setup an RDS instance and setup MySQL on it
+--> Use 3306 from local IP (Workbench) to import data structure and data from local environment then remove this rule
+4.9 Setup S3 so user uploaded profile images, images, and topic images are stored in here
+4.10 Use letsencrypt and certbot to generate a wildcard certificate covering domain name and subdomains (There are
+two methods. The newer way and older way. Use older way). Update Nginx configuration files with paths of generated
+private key and certificate file (signed by letsencrypt CA). Test if HTTPS is working.
+4.11 Test the entire stack and ensure website is functioning.
+
+5. Others
+5.1 Reference Wordpress themes and Divi themes for design
+5.2 Additional features
+5.3 To implement HTTPS locally, generate private key and root certificate. Trust root certificate on OS. Use it
+to generate certificates for each domain name and config Nginx web server to use paths to these domain names private
+keys and certificates. Test if HTTPS works.
+To implement HTTPS in production environment, setup Certbot and generate certificates for all domain names either
+altogether in one file (new way/old way) or separate files. The root certificate, which represents the CA, is already
+taken care of. Configure Nginx web server to use paths to these domain names private keys and certificates, either
+pointing to same two files or separate files. Test if HTTPS works. By default, when most clients receive a response
+from your server, the root certificate which represents the CA is received and checked against its list of trusted CAs
+to determine if website is valid. Since letsencrypt is well established, most browsers already contain this CA in its
+list thus the website gets approved. Test if HTTPS works.
+--> For local, www.gif67.com.dev gif67.com.dev api.gif67.com.dev others
+--> For production, www.gif67.com gif67.com api.gif67.com
+
+5.3
+To implement HTTPS locally, create root certificate and sign it. Trust this root certificate on your OS. Define
+needed domain name certificates and sign them using root certificate. You can do a wildcard certificate (covers a domain
+and all subdomains), place domain and subdomains into a single certificate, or create a certificate for domain and each
+subdomain. Once SSL certificates setup is completed, configure Nginx so each 443 request is handled by a server and ssl
+certificate and key. For example, if we covered domain and subdomains in a single certificate, then requests to
+www.gif67.com.dev and gif67.com.dev will be processed by Nodejs server at port 3001 and a response will be sent back
+to client along with certificate information containing root certificate, intermediate certificate if there is any, and
+domain certificate. The client would check CA that signed root certificate which in this case is owner and would
+normally be rejected since this CA is not by default inside the browser's list of acceptable CAs. But since trust is
+aleady enforced, this CA would be accepted and browser would interpret this certificate as valid and secure. Also, the
+requested domain name would be checked against the domain certificate returned which in this case would cover the
+requested domain so no error will be raised regarding this issue.
+
+To implement HTTPS in production environment, use Certbot to send a CSR request to letsencrypt CA so a root certificate
+signed by letsencrypt would be obtained and also intermediate certificates would be obtained. You can do a wildcard
+certificate (covers a domain and all subdomains), place domain and subdomains into a single certificate, or create a
+certificate for domain and eachsubdomain. Once SSL certificates setup is completed, configure Nginx as above. When a
+443 request is sent to this ip, 443 server block will handle traffic based on hostname. For hostnames of www.gif67.com
+and gif67.com, these requests will be handled by Nodejs server at port 3000 on a different IP and a response will be
+sent back to client along with certificate information containing root certificate, intermediate certificate if there
+is any, and domain certificate. The client would check CA that signed root certificate which in this case is letsencrypt
+and would be accepted. The requested domain would be checked against domain certificate used which in this case covers
+domain and subdomains thus no error is raised.
+
+
+
+
+

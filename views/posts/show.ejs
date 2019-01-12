@@ -15,25 +15,36 @@
                                     </div>
                                     <% } %>
 
-
-
                                     <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none container-item" style="">
                                         <div class="et_pb_blurb_content">
                                             <div class="et_pb_blurb_container">
-                                                <a href="/posts/<%= results[0][0].id %>"><h4 class="et_pb_module_header"><%= results[0][0].name %></h4></a>
-                                                <div class="grid mza w-25 pb-14">
-                                                    <a class="brown" href="/users/<%= results[0][0].userid %>"><p><%= results[0][0].username %></p></a>
-                                                    <a class="brown" href="/topics/<%= results[0][0].topicid %>"><p><%= results[0][0].topicname %></p></a>
-                                                </div>
-                                                <div class="et_pb_blurb_description">
-                                                    <p><%= results[0][0].description %></p>
-                                                    <img class=" "src="<%= results[0][0].imageurl %>">
-                                                    <p><strong><%= moment(results[0][0].datecreated).format('LLL') %></strong></p>
+                                                <a href="/posts/<%= results[0].id %>"><h4 class="et_pb_module_header"><%= results[0].name %></h4></a>
 
+                                                <div class="et_pb_blurb_description">
+                                                    <p><%= results[0].description %></p>
+                                                    <img class=" "src="<%= results[0].imageurl %>">
+                                                    <p><strong><%= moment(results[0].datecreated).format('LLL') %></strong></p>
+                                                    <div class="flex">
+                                                        <a class="brown mr-1" href="/users/<%= results[0].userid %>"><p><%= results[0].username %></p></a>
+                                                        <a class="brown" href="/topics/<%= results[0].topicid %>"><p><%= results[0].topicname %></p></a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <% if (req.user === undefined) { %>
+                                    <% } else if (req.user.id !== results[0].userid) { %>
+
+                                    <% } else { %>
+                                    <div class="et_pb_button_module_wrapper et_pb_button_2_wrapper et_pb_button_alignment_center et_pb_module flex justify">
+                                        <a class="submit-button mr-1" href="/posts/<%= results[0].id %>/edit">Edit</a>
+                                        <form action="/posts/<%= results[0].id %>?_method=DELETE" method="post">
+                                            <button type="submit" class="submit-button">Delete</button>
+                                        </form>
+                                    </div>
+                                    <% } %>
+
 
 
                                 </div>
@@ -41,30 +52,6 @@
 
                         </div>
 
-                        <!--<% if (results[1].length > 0) { %>-->
-                        <!--<div class="et_pb_section et_pb_section_1 et_section_specialty pt-none">-->
-                            <!--<div class="et_pb_row" id="container">-->
-                                <!--<% for(var i=0; i < results[1].length; i++) { %>-->
-                                <!--<div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none container-item" style="">-->
-                                    <!--<div class="et_pb_blurb_content">-->
-
-                                        <!--<div class="et_pb_blurb_container">-->
-                                            <!--<a href="/posts/<%= results[1][i].id %>"><h4 class="et_pb_module_header"><%= results[1][i].name %></h4></a>-->
-                                            <!--<div class="et_pb_blurb_description">-->
-                                                <!--<p><%= results[1][i].description %></p>-->
-                                                <!--<img class=" "src="<%= results[1][i].imageurl %>">-->
-                                                <!--<p><strong><%= moment(results[1][i].datecreated).format('LLL') %></strong></p>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<% } %>-->
-
-                            <!--</div>-->
-                            <!--<div id="loadMore">-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<% } %>-->
                     </div>
 
                 </div>
@@ -74,8 +61,6 @@
 
 </div>
 
-<!--<% if (results[1].length > 0) { %>-->
-<!--<script src="/javascripts/userloadmoreposts.js"></script>-->
-<!--<% } %>-->
+
 
 <% include ../partials/footer %>

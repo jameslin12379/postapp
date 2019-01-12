@@ -16,6 +16,18 @@ var moment = require('moment');
 let mysql = require('mysql');
 
 // Middlewares
+// function isSelf(req, res, next) {
+//     // do any checks you want to in here
+//
+//     // CHECK THE USER STORED IN SESSION FOR A CUSTOM VARIABLE
+//     // you can do this however you want with whatever variables you set up
+//     if (req.user.id.toString() === req.params.id){
+//         return next();
+//     }
+//     // IF A USER ISN'T LOGGED IN, THEN REDIRECT THEM SOMEWHERE
+//     res.render('404');
+// }
+
 function isAuthenticated(req, res, next) {
     // do any checks you want to in here
 
@@ -25,18 +37,6 @@ function isAuthenticated(req, res, next) {
         return next();
     // IF A USER ISN'T LOGGED IN, THEN REDIRECT THEM SOMEWHERE
     res.redirect('/login');
-}
-
-function isSelf(req, res, next) {
-    // do any checks you want to in here
-
-    // CHECK THE USER STORED IN SESSION FOR A CUSTOM VARIABLE
-    // you can do this however you want with whatever variables you set up
-    if (req.user.id.toString() === req.params.id){
-        return next();
-    }
-    // IF A USER ISN'T LOGGED IN, THEN REDIRECT THEM SOMEWHERE
-    res.redirect('/403');
 }
 
 function isNotAuthenticated(req, res, next) {
@@ -51,21 +51,57 @@ function isNotAuthenticated(req, res, next) {
     res.redirect('/403');
 }
 
-function resourceExists(req, res, next) {
-    // let table = '';
-    let query = '';
-    let l = req._parsedOriginalUrl.path[1];
-    switch (l) {
-        case 'u':
-            query = 'SELECT id FROM user';
-            break;
-        case 'p':
-            query = 'SELECT id FROM post';
-            break;
-        case 't':
-            query = 'SELECT id FROM topic';
-            break;
+function isOwnResource(req, res, next) {
+    let uri = req._parsedOriginalUrl.path;
+    uri = uri.substring(1);
+    uri = uri.substring(0, uri.lastIndexOf('/'));
+    if (uri.includes('/')){
+        uri = uri.substring(0, uri.lastIndexOf('/'));
     }
+    uri = uri.substring(0, uri.length - 1);
+    let table = uri;
+    let resourceid = req.params.id;
+    if (table === 'user') {
+        if (req.user.id !== Number(resourceid)) {
+            res.render('403');
+        } else {
+            next();
+        }
+    } else {
+        var connection = mysql.createConnection({
+            host     : process.env.DB_HOSTNAME,
+            user     : process.env.DB_USERNAME,
+            password : process.env.DB_PASSWORD,
+            port     : process.env.DB_PORT,
+            database : process.env.DB_NAME,
+            multipleStatements: true
+        });
+        connection.query('SELECT userid FROM ' + table + ' WHERE id = ?', [resourceid], function (error, results, fields) {
+            // error will be an Error if one occurred during the query
+            // results will contain the results of the query
+            // fields will contain information about the returned results fields (if any)
+            if (error) {
+                throw error;
+            }
+            if (req.user.id !== results[0].userid) {
+                res.render('403');
+            } else {
+                next();
+            }
+        });
+    }
+}
+
+function isResource(req, res, next) {
+    let uri = req._parsedOriginalUrl.path;
+    uri = uri.substring(1);
+    uri = uri.substring(0, uri.lastIndexOf('/'));
+    if (uri.includes('/')){
+        uri = uri.substring(0, uri.lastIndexOf('/'));
+    }
+    uri = uri.substring(0, uri.length - 1);
+    let table = uri;
+    let resourceid = req.params.id;
     var connection = mysql.createConnection({
         host     : process.env.DB_HOSTNAME,
         user     : process.env.DB_USERNAME,
@@ -74,20 +110,19 @@ function resourceExists(req, res, next) {
         database : process.env.DB_NAME,
         multipleStatements: true
     });
-    connection.query(query + ' WHERE id = ?', [Number(req.params.id)], function (error, results, fields) {
+    connection.query('SELECT id FROM ' + table + ' WHERE id = ?', [resourceid], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
         // fields will contain information about the returned results fields (if any)
         if (error) {
             throw error;
         }
-        console.log(results);
-
         if (results.length === 0){
-            console.log('apple');
-            res.redirect('/404');
+            res.render('404');
         }
-        return next();
+        else {
+            next();
+        }
     });
 }
 
@@ -195,7 +230,7 @@ router.post('/users', isNotAuthenticated, [
 );
 
 // GET request for one User.
-router.get('/users/:id', resourceExists, function(req, res){
+router.get('/users/:id', isResource, function(req, res){
     connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?; SELECT id, ' +
         'name, description, imageurl, datecreated FROM post WHERE userid = ? ORDER BY datecreated DESC LIMIT 10; SELECT count(*) ' +
         'as postscount FROM post WHERE userid = ?;SELECT count(*) as followingcount FROM topicfollowing WHERE following = ?;' +
@@ -218,7 +253,7 @@ router.get('/users/:id', resourceExists, function(req, res){
 });
 
 /// GET request for user following sorted by created date in descending order limit by 10
-router.get('/users/:id/following', resourceExists, function(req, res){
+router.get('/users/:id/following', isResource, function(req, res){
     connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?; SELECT t.id, ' +
         't.name, t.imageurl from topicfollowing as tf inner join topic as t on tf.followed = t.id where tf.following ' +
         '= ? ORDER BY tf.datecreated DESC LIMIT 10; SELECT count(*) as postscount FROM post WHERE userid = ?;SELECT count(*) ' +
@@ -242,7 +277,7 @@ router.get('/users/:id/following', resourceExists, function(req, res){
 });
 
 /// GET request for user comments sorted by created date in descending order limit by 10
-router.get('/users/:id/comments', resourceExists, function(req, res){
+router.get('/users/:id/comments', isResource, function(req, res){
     connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?;SELECT id, ' +
         'description, datecreated FROM comment WHERE userid = ? ORDER BY datecreated DESC LIMIT 10; SELECT count(*) as postscount FROM post WHERE userid = ?; SELECT' +
         ' count(*) as followingcount FROM topicfollowing WHERE following = ?;SELECT count(*) as commentscount FROM comment WHERE userid = ?;' +
@@ -265,7 +300,7 @@ router.get('/users/:id/comments', resourceExists, function(req, res){
 });
 
 /// GET request for user upvotes sorted by created date in descending order limit by 10
-router.get('/users/:id/upvotes', resourceExists, function(req, res){
+router.get('/users/:id/upvotes', isResource, function(req, res){
     connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?;SELECT p.id, p.id, p.name,' +
         'p.description, p.imageurl, p.datecreated from upvote as up inner join post as p on up.upvoted = p.id where up.upvote = ? ORDER BY up.datecreated DESC LIMIT 10; SELECT count(*) as postscount FROM post WHERE userid = ?; SELECT' +
         ' count(*) as followingcount FROM topicfollowing WHERE following = ?;SELECT count(*) as commentscount FROM comment WHERE userid = ?;' +
@@ -290,7 +325,7 @@ router.get('/users/:id/upvotes', resourceExists, function(req, res){
 
 
 // GET request to update User.
-router.get('/users/:id/edit', resourceExists, isAuthenticated, isSelf, function(req, res){
+router.get('/users/:id/edit', isResource, isAuthenticated, isOwnResource, function(req, res){
     connection.query('SELECT id, email, username, description FROM user WHERE id = ?', [req.params.id],
         function (error, results, fields) {
         // error will be an Error if one occurred during the query
@@ -310,7 +345,7 @@ router.get('/users/:id/edit', resourceExists, isAuthenticated, isSelf, function(
 });
 
 // PUT request to update User.
-router.put('/users/:id', resourceExists, isAuthenticated, isSelf, upload.single('file'), [
+router.put('/users/:id', isResource, isAuthenticated, isOwnResource, upload.single('file'), [
     body('email', 'Empty email').not().isEmpty(),
     body('username', 'Empty username').not().isEmpty(),
     body('description', 'Empty password').not().isEmpty(),
@@ -390,7 +425,7 @@ router.put('/users/:id', resourceExists, isAuthenticated, isSelf, upload.single(
 });
 
 // DELETE request to delete User.
-router.delete('/users/:id', resourceExists, isAuthenticated, isSelf, function(req, res){
+router.delete('/users/:id', isResource, isAuthenticated, isOwnResource, function(req, res){
     connection.query('DELETE FROM user WHERE id = ?', [req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
@@ -483,15 +518,15 @@ router.post('/posts', isAuthenticated, upload.single('file'), [
 );
 
 // GET request for one Post.
-router.get('/posts/:id', resourceExists, function(req, res){
-    connection.query('select p.id, p.name, p.description, p.imageurl, p.datecreated, p.userid, p.topicid, u.username, t.name as topicname from post as p inner join user as u on p.userid = u.id inner join topic as t on p.topicid = t.id where p.id = ?', [req.params.id], function (error, results, fields) {
+router.get('/posts/:id', isResource, function(req, res){
+    connection.query('select p.id, p.name, p.description, p.imageurl, p.datecreated, p.userid, p.topicid, ' +
+        'u.username, t.name as topicname from post as p inner join user as u on p.userid = u.id inner join topic as t on p.topicid = t.id where p.id = ?', [req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
         // fields will contain information about the returned results fields (if any)
         if (error) {
             throw error;
         }
-        console.log(results);
         res.render('posts/show', {
             req: req,
             results: results,
@@ -502,8 +537,111 @@ router.get('/posts/:id', resourceExists, function(req, res){
     });
 });
 
+
+// GET request to update Post.
+router.get('/posts/:id/edit', isResource, isAuthenticated, isOwnResource, function(req, res){
+    connection.query('SELECT id, name, description, topicid FROM post WHERE id = ?', [req.params.id],
+        function (error, results, fields) {
+            // error will be an Error if one occurred during the query
+            // results will contain the results of the query
+            // fields will contain information about the returned results fields (if any)
+            if (error) {
+                throw error;
+            }
+            console.log(results);
+            // res.render('posts/edit', {
+            //     req: req,
+            //     result: results[0],
+            //     title: 'Edit post',
+            //     errors: req.flash('errors'),
+            //     inputs: req.flash('inputs')
+            // });
+        });
+});
+
+// PUT request to update User.
+router.put('/users/:id', isResource, isAuthenticated, isOwnResource, upload.single('file'), [
+    body('email', 'Empty email').not().isEmpty(),
+    body('username', 'Empty username').not().isEmpty(),
+    body('description', 'Empty password').not().isEmpty(),
+    body('email', 'Email must be between 5-200 characters.').isLength({min:5, max:200}),
+    body('username', 'Username must be between 5-200 characters.').isLength({min:5, max:200}),
+    body('description', 'Username must be between 5-500 characters.').isLength({min:5, max:500}),
+    body('email', 'Invalid email').isEmail()
+], (req, res) => {
+    // check if inputs are valid
+    // if yes then upload picture to S3, get new imageurl, check existing imageurl and if it is not
+    // default picture delete it using link, save imageurl and other fields into DB and if successful
+    // return to user home page
+    const errors = validationResult(req);
+    let errorsarray = errors.array();
+    // file is not empty
+    // file size limit (max 30mb)
+    // file type is image
+    if (req.file.size === 0){
+        errorsarray.push({msg: "File cannot be empty."});
+    }
+    if (req.file.mimetype.slice(0, 5) !== 'image'){
+        errorsarray.push({msg: "File type needs to be image."});
+    }
+    if (req.file.size > 30000000){
+        errorsarray.push({msg: "File cannot exceed 30MB."});
+    }
+    if (errorsarray.length !== 0) {
+        // There are errors. Render form again with sanitized values/errors messages.
+        // Error messages can be returned in an array using `errors.array()`.
+        req.flash('errors', errorsarray);
+        req.flash('inputs', {email: req.body.email, username: req.body.username, description: req.body.description});
+        res.redirect(req._parsedOriginalUrl.pathname + '/edit');
+    }
+    else {
+        sanitizeBody('email').trim().escape();
+        sanitizeBody('username').trim().escape();
+        sanitizeBody('description').trim().escape();
+        const email = req.body.email;
+        const username = req.body.username;
+        const description = req.body.description;
+        // upload image to AWS, get imageurl, check existing imageurl and if not pointing to default profile picture,
+        // delete associated image from bucket, update row from DB with email, username, description, imageurl
+        // console.log(req.file);
+        const uploadParams = {
+            Bucket: 'postappbucket', // pass your bucket name
+            Key: 'profiles/' + req.file.originalname, // file will be saved as testBucket/contacts.csv
+            Body: req.file.buffer,
+            ContentType: req.file.mimetype
+        };
+        s3.upload (uploadParams, function (err, data) {
+            if (err) {
+                console.log("Error", err);
+            } if (data) {
+                if (req.user.imageurl !== 'https://s3.amazonaws.com/postappbucket/profiles/blank-profile-picture-973460_640.png'){
+                    const uploadParams2 = {
+                        Bucket: 'postappbucket', // pass your bucket name
+                        Key: 'profiles/' + req.user.imageurl.substring(req.user.imageurl.lastIndexOf('/') + 1) // file will be saved as testBucket/contacts.csv
+                    };
+                    s3.deleteObject(uploadParams2, function(err, data) {
+                        if (err) console.log(err, err.stack);  // error
+                        else     console.log();                 // deleted
+                    });
+                }
+                connection.query('UPDATE user SET email = ?, username = ?, description = ?, imageurl = ? WHERE id = ?', [email, username, description, data.Location, req.params.id], function (error, results, fields) {
+                    // error will be an Error if one occurred during the query
+                    // results will contain the results of the query
+                    // fields will contain information about the returned results fields (if any)
+                    if (error) {
+                        throw error;
+                    }
+                    req.flash('alert', 'Profile edited.');
+                    res.redirect(req._parsedOriginalUrl.pathname);
+                });
+            }
+        });
+    }
+});
+
+
 // DELETE request to delete Image.
-router.delete('/images/:id', resourceExists, isAuthenticated, function(req, res){
+router.delete('/images/:id', isResource, isAuthenticated, function(req, res){
     connection.query('SELECT userid FROM image WHERE id = ?', [req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
@@ -550,7 +688,7 @@ router.get('/topics', function(req, res){
 
 // get topic information, get 10 images of the topic, if current user is logged in, check if he has
 // followed topic or not if yes pass unfollow to button value else pass follow to button value
-router.get('/topics/:id', resourceExists, function(req, res){
+router.get('/topics/:id', isResource, function(req, res){
     connection.query('SELECT id, name, description, datecreated, imageurl FROM `topic` WHERE id = ?; SELECT id, ' +
         'imageurl FROM `image` WHERE topicid = ? ORDER BY datecreated DESC LIMIT 12; SELECT count(*) as imagescount ' +
         'FROM image WHERE topicid = ?;SELECT count(*) as followerscount FROM topicfollowing WHERE followed = ?',
@@ -590,7 +728,7 @@ router.get('/topics/:id', resourceExists, function(req, res){
 });
 
 /// GET request for topic followers sorted by created date in descending order limit by 12
-router.get('/topics/:id/followers', resourceExists, function(req, res){
+router.get('/topics/:id/followers', isResource, function(req, res){
     connection.query('SELECT id, name, description, imageurl FROM `topic` WHERE id = ?; SELECT u.id, u.username, ' +
         'u.imageurl from topicfollowing as tf inner join user as u on tf.following = u.id where tf.followed = ? ' +
         'ORDER BY tf.datecreated DESC LIMIT 12; SELECT count(*) as imagescount FROM image WHERE topicid = ?;' +

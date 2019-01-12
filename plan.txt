@@ -63,8 +63,8 @@
       - /posts/id/comments GET (implemented on same page)
       - /posts/id/upvotes GET (implemented on same page)
       - /posts GET (Disabled)
-      - /posts/id/edit GET
-      - /posts/id PUT
+      - /posts/id/edit GET x
+      - /posts/id PUT x
       - /posts/id DELETE
       topic
       - /topics/new GET (Disabled)
@@ -87,12 +87,12 @@
       upvote
 
       other routes
-      - / GET
-      - /login GET
-      - /login POST
-      - /logout GET
-      - /403 GET
-      - /404 GET
+      - / GET x
+      - /login GET x
+      - /login POST x
+      - /logout GET x
+      - /403 GET x
+      - /404 GET x
 ---> Controllers (Defined for each route)
 ---> Models(ORM) / SQL
 ---> Views (Defined for each route)

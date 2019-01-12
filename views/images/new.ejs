@@ -1,0 +1,152 @@
+
+
+<% include ../partials/header %>
+
+
+<div id="et-main-area">
+    <div id="main-content">
+        <article id="post-209028" class="post-209028 page type-page status-publish hentry">
+            <div class="entry-content">
+                <div id="et-boc" class="et-boc">
+                    <div class="et_builder_inner_content et_pb_gutters3">
+                        <div class="et_pb_section et_pb_section_2 et_section_regular">
+                            <div class="et_pb_row et_pb_row_6 pt-none">
+                                <div class="et_pb_column et_pb_column_1_2 et_pb_column_12    et_pb_css_mix_blend_mode_passthrough ptb-50">
+                                    <div class="et_pb_module et_pb_signup_0 et_hover_enabled et_pb_newsletter_layout_left_right et_pb_newsletter et_pb_subscribe clearfix et_pb_bg_layout_dark  et_pb_text_align_left et_pb_no_bg">
+
+                                        <div class="et_pb_newsletter_form">
+                                            <h1 class="text-center pb-2 fw-700 lh-13 white">Upload a photo</h1>
+                                            <form action="/images" method="post" enctype="multipart/form-data">
+
+                                                <% if (errors.length > 0) { %>
+                                                <% for(var i = 0; i < errors.length; i++) { %>
+                                                <div class="et_pb_newsletter_result et_pb_newsletter_error show text-center mb-1 fs-18 red">
+                                                    <%= errors[i].msg %>
+                                                </div>
+                                                <% } %>
+                                                <% } %>
+                                                <!--<div class="et_pb_newsletter_result et_pb_newsletter_error"></div>-->
+                                                <!--<div class="et_pb_newsletter_result et_pb_newsletter_success">-->
+                                                <!--<h2>Success!</h2>-->
+                                                <!--</div>-->
+                                                <div class="et_pb_newsletter_fields">
+                                                    <p class="et_pb_newsletter_field et_pb_contact_field_last">
+                                                        <input type="file" class="input" name="file" accept="image/*" required>
+
+                                                    </p>
+                                                    <p class="et_pb_newsletter_field et_pb_contact_field_last">
+                                                        <select class="input" name="topic" required>
+                                                            <!--<option>Select a topic</option>-->
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "1"){%>selected<% } %><% } %> value="1">Art</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "2"){%>selected<% } %><% } %> value="2">Books</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "3"){%>selected<% } %><% } %> value="3">Comics</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "4"){%>selected<% } %><% } %> value="4">Culture</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "5"){%>selected<% } %><% } %> value="5">Film</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "6"){%>selected<% } %><% } %> value="6">Food</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "7"){%>selected<% } %><% } %> value="7">Gaming</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "8"){%>selected<% } %><% } %> value="8">Humor</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "9"){%>selected<% } %><% } %> value="9">Internet Culture</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "10"){%>selected<% } %><% } %> value="10">Fiction</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "11"){%>selected<% } %><% } %> value="11">Music</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "12"){%>selected<% } %><% } %> value="12">Photography</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "13"){%>selected<% } %><% } %> value="13">Poetry</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "14"){%>selected<% } %><% } %> value="14">Social Media</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "15"){%>selected<% } %><% } %> value="15">Sports</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "16"){%>selected<% } %><% } %> value="16">Style</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "17"){%>selected<% } %><% } %> value="17">TV</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "18"){%>selected<% } %><% } %> value="18">Writing</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "19"){%>selected<% } %><% } %> value="19">Business</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "20"){%>selected<% } %><% } %> value="20">Design</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "21"){%>selected<% } %><% } %> value="21">Economy</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "22"){%>selected<% } %><% } %> value="22">Startups</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "23"){%>selected<% } %><% } %> value="23">Freelancing</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "24"){%>selected<% } %><% } %> value="24">Leadership</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "25"){%>selected<% } %><% } %> value="25">Marketing</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "26"){%>selected<% } %><% } %> value="26">Productivity</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "27"){%>selected<% } %><% } %> value="27">Work</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "28"){%>selected<% } %><% } %> value="28">Android</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "29"){%>selected<% } %><% } %> value="29">AI</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "30"){%>selected<% } %><% } %> value="30">Blockchain</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "31"){%>selected<% } %><% } %> value="31">Cryptocurrency</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "32"){%>selected<% } %><% } %> value="32">Cybersecurity</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "33"){%>selected<% } %><% } %> value="33">Data Science</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "34"){%>selected<% } %><% } %> value="34">Gadgets</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "35"){%>selected<% } %><% } %> value="35">IOS</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "36"){%>selected<% } %><% } %> value="36">Javascript</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "37"){%>selected<% } %><% } %> value="37">Machine Learning</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "38"){%>selected<% } %><% } %> value="38">Math</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "39"){%>selected<% } %><% } %> value="39">Neuroscience</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "40"){%>selected<% } %><% } %> value="40">Programming</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "41"){%>selected<% } %><% } %> value="41">Science</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "42"){%>selected<% } %><% } %> value="42">Self Driving Cars</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "43"){%>selected<% } %><% } %> value="43">Software</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "44"){%>selected<% } %><% } %> value="44">Space</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "45"){%>selected<% } %><% } %> value="45">Tech</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "46"){%>selected<% } %><% } %> value="46">UX</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "47"){%>selected<% } %><% } %> value="47">Visual Design</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "48"){%>selected<% } %><% } %> value="48">Creativity</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "49"){%>selected<% } %><% } %> value="49">Family</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "50"){%>selected<% } %><% } %> value="50">Health</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "51"){%>selected<% } %><% } %> value="51">Parenting</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "52"){%>selected<% } %><% } %> value="52">Personal Finance</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "53"){%>selected<% } %><% } %> value="53">Pets</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "54"){%>selected<% } %><% } %> value="54">Psychology</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "55"){%>selected<% } %><% } %> value="55">Relationships</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "56"){%>selected<% } %><% } %> value="56">Self</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "57"){%>selected<% } %><% } %> value="57">Travel</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "58"){%>selected<% } %><% } %> value="58">Wellness</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "59"){%>selected<% } %><% } %> value="59">Basic Income</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "60"){%>selected<% } %><% } %> value="60">City</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "61"){%>selected<% } %><% } %> value="61">Education</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "62"){%>selected<% } %><% } %> value="62">Environment</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "63"){%>selected<% } %><% } %> value="63">Equality</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "64"){%>selected<% } %><% } %> value="64">Future</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "65"){%>selected<% } %><% } %> value="65">History</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "66"){%>selected<% } %><% } %> value="66">Immigration</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "67"){%>selected<% } %><% } %> value="67">Justice</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "68"){%>selected<% } %><% } %> value="68">Language</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "69"){%>selected<% } %><% } %> value="69">Media</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "70"){%>selected<% } %><% } %> value="70">Philosophy</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "71"){%>selected<% } %><% } %> value="71">Transportation</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "72"){%>selected<% } %><% } %> value="72">World</option>
+                                                            <option <% if (inputs.length > 0) { %><% if (inputs[0].topic === "73"){%>selected<% } %><% } %> value="73">Other</option>
+                                                        </select>
+                                                    </p>
+
+
+                                                    <!--<p class="et_pb_newsletter_button_wrap">-->
+                                                    <!--<button class="et_pb_newsletter_button et_pb_button" type="submit" data-icon="">Log in</button>-->
+
+                                                    <!--&lt;!&ndash;<button class="et_pb_newsletter_button et_pb_button" type="submit" data-icon="">&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<span class="et_subscribe_loader"></span>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<span class="et_pb_newsletter_button_text">Log in</span>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<button type="submit">Log in</button>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</button>&ndash;&gt;-->
+                                                    <!--</p>-->
+                                                    <button class="submit-button" type="submit" data-icon="">Submit</button>
+
+
+
+                                                </div>
+                                                <!--<input type="hidden" value="mailchimp" name="et_pb_signup_provider" />-->
+                                                <!--<input type="hidden" value="03dac884f0" name="et_pb_signup_list_id" />-->
+                                                <!--<input type="hidden" value="MailChimp" name="et_pb_signup_account_name" />-->
+                                                <!--<input type="hidden" value="true" name="et_pb_signup_ip_address" />-->
+                                            </form>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  </div>
+                </div> </div>
+        </article>
+    </div>
+
+</div>
+<% include ../partials/footer %>
+
+
+
+

@@ -122,5 +122,23 @@ function getupvotes(){
 });
 }
 
-getupvotes();
+//getupvotes();
 
+function getmorepostsforuser(num){
+	let values = [];
+    	for (let i = 0; i < 300; i++) {
+        	let randomName = faker.lorem.sentence();
+        	let randomDescription = faker.lorem.paragraph();
+        	let imageurl = 'https://s3.amazonaws.com/postappbucket/images/michael-baccin-1284971-unsplash.jpg';
+        	let randomUserid = num;
+        	let randomTopicid = 10;
+        	values.push([randomName,randomDescription,imageurl,randomUserid,randomTopicid]);
+    }
+    connection.query('INSERT INTO post (name,description,imageurl,userid,topicid) VALUES ?', [values], function(error, results, fields) {
+        if (error) throw error;
+        console.log('saved');
+        connection.end();
+});
+}
+console.log('apple');
+getmorepostsforuser(81880)

@@ -1,0 +1,18 @@
+<% include ../partials/header %>
+
+<main role="main" class="inner cover mt-5 mb-5">
+    <% if (alert.length > 0) { %>
+    <div class="alert alert-success alert-short mb-3" role="alert">
+        <%= alert %>
+    </div>
+    <% } %>
+    <img src="<%= result.imageurl %>" class="img-fluid mb-3" alt="Responsive image">
+    <p class="lead"><%= moment(result.datecreated).format('LL') %></p>
+    <a href="/users/<%= result.userid %>"><%= result.username %></a>
+    <a class="btn btn-outline-secondary" href="/topics/<%= result.topicid %>"><%= result.name %></a>
+</main>
+
+<% include ../partials/footer %>
+
+
+

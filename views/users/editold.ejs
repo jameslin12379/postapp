@@ -1,0 +1,25 @@
+<% include ../partials/header %>
+
+    <main role="main" class="inner cover">
+        <h1 class="h3 mb-3 font-weight-normal">Edit profile</h1>
+        <form action="/users/<%= result.id %>?_method=PUT" method="post" class="form-signin">
+            <% if (errors.length > 0) { %>
+            <% for(var i = 0; i < errors.length; i++) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= errors[i].msg %>
+            </div>
+            <% } %>
+            <% } %>
+            <input type="email" class="form-control mb-3" name="email" value="<%if (inputs.length > 0) { %><%= inputs[0].email %><% }else{ %><%= result.email %><% } %>" required autofocus>
+            <input type="password" class="form-control mb-3" name="password" required>
+            <input type="text" class="form-control mb-3" name="username" value="<%if (inputs.length > 0) { %><%= inputs[0].username %><% }else{ %><%= result.username %><% } %>" required>
+            <textarea class="form-control mb-3" name="description" rows="5" cols="5"><%if (inputs.length > 0) { %><%= inputs[0].description %><% }else{ %><%= result.description %><% } %></textarea>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+        </form>
+    </main>
+
+<% include ../partials/footer %>
+
+
+
+

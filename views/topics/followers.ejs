@@ -1,0 +1,73 @@
+<% include ../partials/header %>
+
+<div id="et-main-area">
+    <div id="main-content">
+        <article id="post-209034" class="post-209034 page type-page status-publish hentry">
+            <div class="entry-content">
+                <div id="et-boc" class="et-boc">
+                    <div class="et_builder_inner_content et_pb_gutters3">
+                        <div class="et_pb_section et_pb_section_1 et_section_specialty">
+                            <div class="et_pb_row">
+                                <div class="et_pb_column et_pb_column_1_3 et_pb_column_3    et_pb_css_mix_blend_mode_passthrough et_pb_column_single w-100 ptb-0">
+                                    <% if (alert.length > 0) { %>
+                                    <div class="et_pb_newsletter_result et_pb_newsletter_error show text-center mb-1 fs-18">
+                                        <%= alert %>
+                                    </div>
+                                    <% } %>
+                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_5 et_pb_bg_layout_light  et_pb_text_align_center  et_pb_blurb_position_top box-shadow-none pd-0 box-shadow-none" style="">
+                                        <div class="et_pb_blurb_content">
+                                            <div class="et_pb_main_blurb_image width-100 height-100"><img src="<%= results[0][0].imageurl %>" alt="" class="et-waypoint et_pb_animation_top et-animated width-100p height-100p"></div>
+                                            <div class="et_pb_blurb_container">
+                                                <h4 class="et_pb_module_header pb-14"><%= results[0][0].name %></h4>
+                                                <div class="et_pb_blurb_description">
+                                                    <!--<div class="grid">-->
+                                                    <!--<p></p>-->
+
+                                                    <div class="grid mza w-25 pb-14">
+                                                        <p><%= results[2][0].imagescount %> Photos</p>
+                                                        <a class="brown" href="/topics/<%= results[0][0].id %>/followers"><p><%= results[3][0].followerscount %> Followers</p></a>
+                                                    </div>
+
+
+                                                    <!--<p></p>-->
+                                                    <!--</div>-->
+                                                    <p class="mza w-60"><%= results[0][0].description %></p>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="count" class="et_pb_section et_pb_section_1 et_section_specialty pt-none" data-count=<%= results[3][0].followerscount %>>
+                            <div class="et_pb_row">
+                                <div id="gallery" class="gallery-s">
+                                    <% for(var i=0; i < results[1].length; i++) { %>
+                                    <div class="gallery-item">
+                                        <a class="gallery-item-a mr-none" href="/users/<%= results[1][i].id %>"><img class="gallery-item-img" src="<%= results[1][i].imageurl %>" alt="">
+                                        </a>
+                                    </div>
+                                    <% } %>
+                                </div>
+                                <div id="loadMore">
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
+                </div>
+            </div> </div>
+    </article>
+</div>
+
+</div>
+
+<script src="/javascripts/topicloadmorefollowers.js"></script>
+<% include ../partials/footer %>

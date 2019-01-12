@@ -1,0 +1,45 @@
+<% include ../partials/header %>
+
+<div id="et-main-area">
+    <div id="main-content">
+        <article id="post-209034" class="post-209034 page type-page status-publish hentry">
+            <div class="entry-content">
+                <div id="et-boc" class="et-boc">
+                    <div class="et_builder_inner_content et_pb_gutters3">
+
+
+                        <div class="et_pb_section et_pb_section_1 et_section_specialty">
+                            <div class="et_pb_row">
+                                <!--<div id="gallery" class="gallery">-->
+                                    <!--<% for(var i=0; i < results.length; i++) { %>-->
+                                    <!--<div class="gallery-item">-->
+                                        <!--<a class="gallery-item-a mr-none" href="/topics/<%= results[i].id %>"><img class="gallery-item-img" src="<%= results[i].imageurl %>" alt="">-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                    <!--<% } %>-->
+                                <!--</div>-->
+                                <div id="gallery" class="gallery">
+                                    <% for(var i=0; i < results.length; i++) { %>
+                                    <div class="gallery-item relative">
+                                        <img class="gallery-item-img" src="<%= results[i].imageurl %>" alt="">
+                                        <a class="absolute flex-imp width-100p height-100p t0 justify align-items" href="/topics/<%= results[i].id %>">
+                                            <span class="white fs-20 fwb"><%= results[i].name %></span>
+                                        </a>
+                                        <!--<div class="absolute flex width-100p height-100p t0 justify align-items z-10"><span class="white fs-30 fwbr"><%= results[i].name %></span></div>-->
+                                    </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+
+                </div>
+            </div> </div>
+    </article>
+</div>
+
+</div>
+
+
+
+<% include ../partials/footer %>

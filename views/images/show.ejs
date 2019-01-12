@@ -1,0 +1,58 @@
+
+<% include ../partials/header %>
+
+<div id="et-main-area">
+    <div id="main-content">
+        <article id="post-209034" class="post-209034 page type-page status-publish hentry">
+            <div class="entry-content">
+                <div id="et-boc" class="et-boc">
+                    <div class="et_builder_inner_content et_pb_gutters3">
+                        <div class="et_pb_section et_pb_section_1 et_section_specialty">
+                            <div class="et_pb_row">
+                                <div class="et_pb_column et_pb_column_1_3 et_pb_column_3    et_pb_css_mix_blend_mode_passthrough et_pb_column_single w-100 ptb-0">
+                                    <% if (alert.length > 0) { %>
+                                    <div class="et_pb_newsletter_result et_pb_newsletter_error show text-center mb-1 fs-18">
+                                        <%= alert %>
+                                    </div>
+                                    <% } %>
+                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_5 et_pb_bg_layout_light  et_pb_text_align_center  et_pb_blurb_position_top box-shadow-none pd-0 box-shadow-none" style="">
+                                        <div class="et_pb_blurb_content">
+                                            <div class="et_pb_blurb_container">
+                                                <img src="<%= result.imageurl %>" class="img-fluid mb-3" alt="Responsive image">
+
+                                                <div class="et_pb_blurb_description">
+                                                    <p class="lead"><%= moment(result.datecreated).format('LL') %></p>
+                                                    <a class="mr-3" href="/users/<%= result.userid %>"><%= result.username %></a>
+                                                    <a class="btn btn-outline-secondary" href="/topics/<%= result.topicid %>"><%= result.name %></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <% if (req.user === undefined) { %>
+                                    <% } else if (req.user.id !== result.userid) { %>
+                                    <% } else { %>
+                                    <div class="et_pb_button_module_wrapper et_pb_button_2_wrapper et_pb_button_alignment_center et_pb_module flex justify">
+                                        <form action="/images/<%= result.id %>?_method=DELETE" method="post">
+                                            <button type="submit" class="submit-button">Delete</button>
+                                        </form>
+                                    </div>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div> </div>
+    </article>
+</div>
+
+</div>
+
+
+
+<% include ../partials/footer %>

@@ -1,0 +1,60 @@
+<% include ../partials/header %>
+
+
+<div id="et-main-area">
+    <div id="main-content">
+        <article id="post-209028" class="post-209028 page type-page status-publish hentry">
+            <div class="entry-content">
+                <div id="et-boc" class="et-boc">
+                    <div class="et_builder_inner_content et_pb_gutters3">
+                        <div class="et_pb_section et_pb_section_2 et_section_regular">
+                            <div class="et_pb_row et_pb_row_6 pt-none">
+                                <div class="et_pb_column et_pb_column_1_2 et_pb_column_12    et_pb_css_mix_blend_mode_passthrough ptb-50">
+                                    <div class="et_pb_module et_pb_signup_0 et_hover_enabled et_pb_newsletter_layout_left_right et_pb_newsletter et_pb_subscribe clearfix et_pb_bg_layout_dark  et_pb_text_align_left et_pb_no_bg">
+
+                                        <div class="et_pb_newsletter_form">
+                                            <h1 class="text-center pb-2 fw-700 lh-13 white">Edit profile</h1>
+                                            <form action="/users/<%= result.id %>?_method=PUT" method="post" enctype="multipart/form-data">
+
+                                                <% if (errors.length > 0) { %>
+                                                <% for(var i = 0; i < errors.length; i++) { %>
+                                                <div class="et_pb_newsletter_result et_pb_newsletter_error show text-center mb-1 fs-18 red">
+                                                    <%= errors[i].msg %>
+                                                </div>
+                                                <% } %>
+                                                <% } %>
+                                                <!--<div class="et_pb_newsletter_result et_pb_newsletter_error"></div>-->
+                                                <!--<div class="et_pb_newsletter_result et_pb_newsletter_success">-->
+                                                <!--<h2>Success!</h2>-->
+                                                <!--</div>-->
+                                                <div class="et_pb_newsletter_fields">
+                                                    <p class="et_pb_newsletter_field et_pb_contact_field_last">
+                                                        <input class="input" type="email" placeholder="Email address" name="email" value="<%if (inputs.length > 0) { %><%= inputs[0].email %><% }else{ %><%= result.email %><% } %>" required autofocus>
+                                                    </p>
+                                                    <p class="et_pb_newsletter_field et_pb_contact_field_last">
+                                                        <input class="input" type="text" placeholder="Username" name="username" value="<%if (inputs.length > 0) { %><%= inputs[0].username %><% }else{ %><%= result.username %><% } %>" required>
+                                                    </p>
+                                                    <p class="et_pb_newsletter_field et_pb_contact_field_last">
+                                                        <textarea class="input" name="description" rows="5" cols="5"><%if (inputs.length > 0) { %><%= inputs[0].description %><% }else{ %><%= result.description %><% } %></textarea>
+                                                    </p>
+                                                    <p class="et_pb_newsletter_field et_pb_contact_field_last">
+                                                        <input type="file" class="input" name="file" accept="image/*" required>
+                                                    </p>
+                                                    <button class="submit-button" type="submit" data-icon="">Submit</button>
+                                                </div>
+                                            </form>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  </div>
+                </div> </div>
+        </article>
+    </div>
+
+</div>
+<% include ../partials/footer %>
+
+

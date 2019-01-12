@@ -1,0 +1,21 @@
+<% include ../partials/header %>
+
+    <main role="main" class="inner cover">
+        <!--<img class="mb-4" src="https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png" alt="" width="72" height="72">-->
+        <form class="form-signin" action="/users" method="post">
+            <% if (errors.length > 0) { %>
+            <% for(var i = 0; i < errors.length; i++) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= errors[i].msg %>
+            </div>
+            <% } %>
+            <% } %>
+            <input type="email" class="form-control" placeholder="Email address" name="email" <% if (inputs.length > 0) { %>value="<%=inputs[0].email%>"<% } %> required autofocus>
+            <input type="password" class="form-control" placeholder="Password" name="password" <% if (inputs.length > 0) { %>value="<%=inputs[0].password%>"<% } %> required>
+            <input type="text" class="form-control" placeholder="Username" name="username" <% if (inputs.length > 0) { %>value="<%=inputs[0].username%>"<% } %> required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+        </form>
+    </main>
+
+<% include ../partials/footer %>
+

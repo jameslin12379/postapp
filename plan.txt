@@ -8,19 +8,19 @@
 --> topic
 --> topicfollowing
 --> comment
---> like
+--> upvote
 -Determine columns needed for each table
---> user (id, username, email, password, description, imageurl, datecreated, dateedited)
+--> user (id, email, password, username, description, imageurl, datecreated, dateedited)
 --> post (id, name, description, imageurl, datecreated, dateedited, userid, topicid)
 --> topic (id, name, description, imageurl, datecreated, dateedited)
 --> topicfollowing (id, following, followed, datecreated, dateedited)
 --> comment (id, description, datecreated, dateedited, userid, postid)
---> like (id, like, liked, datecreated, dateedited)
+--> upvote (id, upvote, upvoted, datecreated, dateedited)
 -Determine relationships between tables (one to one, one to many, many to many)
 --> user and post (one to many)
 --> topicfollowing (many to many)
 --> user and comment (one to many)
---> like (many to many)
+--> upvote (many to many)
 --> topic and post (one to many)
 --> post and comment (one to many)
 -Determine DBMS to use (MySQL, PostgreSQL, etc...)
@@ -35,22 +35,24 @@
 --> Setup Nginx configurations
 ---> Configure nginx.conf so all 80 traffic are redirected to 443
 ---> 443 traffic are handled based on hostname
-----> Requests toward www.gif67.com and gif67.com are redirected to app server at port 3001
-----> Requests toward api.gif67.com are redirected to API server at port 3002
-----> Other 443 requests are redirected to an error page or app server at port 3001
+----> Requests toward post67.com.dev and www.post67.com.dev are redirected to app server at port 3000
+----> Requests toward api.post67.com.dev are redirected to API server at port 3001
+----> Other 443 requests are redirected to an error page
 ----> Setup sites-available folder so for each website there is a corresponding config file
 ----> Setup sites-enabled so for each website there is a corresponding symlink
 ----> Test Nginx with -t parameter, restart Nginx web server, and ensure Nginx web server is running
 
 3.2 -Use express to generate a project folder containing code related to application
---> Within this project, define routes, controllers, models, views, .env file, and other config files
+--> Within this project, define routes, controllers, models, views, .env file, .gitignore, data automation scripts, and other config files
 ---> Routes
 ----> user
-      - /users/new GET
-      - /users POST
-      - /users/id GET
-      - /users GET (Disabled)
+      - /users/new GET x
+      - /users POST x
+      - /users/id GET x
       - /users/id/following GET
+      - /users/id/comments GET
+      - /users/id/upvotes GET
+      - /users GET (Disabled)
       - /users/id/edit GET
       - /users/id PUT
       - /users/id DELETE
@@ -80,6 +82,7 @@
       - /topicfollowings/id PUT (Disabled)
       - /topicfollowings/id DELETE
       other routes
+      - / GET
       - /login GET
       - /login POST
       - /logout GET
@@ -95,7 +98,7 @@
  images for each topic/user from API server, loading more followers for each topic from API server
  , loading more following for each user from API server) into public folder
 - Setup Git to add, commit, and push code into Github repository regularly
-- Setup this application so it is served locally at port 3001
+- Setup this application so it is served locally at port 3000
 
 3.3 -Use loopback4 to generate a project folder containing code related to API
 --> Within this project, define routes, controllers, models, views, .env file, and other config files

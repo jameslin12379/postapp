@@ -140,5 +140,21 @@ function getmorepostsforuser(num){
         connection.end();
 });
 }
-console.log('apple');
-getmorepostsforuser(81880)
+
+function getmorecommentsforuser(num){
+        let values = [];
+        for (let i = 0; i < 300; i++) {
+                let randomDescription = faker.lorem.paragraph();
+                let randomUserid = num;
+                let randomPostid = 10;
+                values.push([randomDescription,randomUserid,randomPostid]);
+    }
+    connection.query('INSERT INTO comment (description,userid,postid) VALUES ?', [values], function(error, results, fields) {
+        if (error) throw error;
+        console.log('saved');
+        connection.end();
+});
+}
+
+//getmorepostsforuser(81880)
+getmorecommentsforuser(81880)

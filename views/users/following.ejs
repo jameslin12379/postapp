@@ -21,18 +21,21 @@
                                             <div class="et_pb_blurb_container">
                                                 <h4 class="et_pb_module_header pb-14"><%= results[0][0].username %></h4>
                                                 <div class="et_pb_blurb_description">
-                                                    <p>Joined <%= moment(results[0][0].datecreated).format('LL') %></p>
-
+                                                    <p>Joined <%= moment(results[0][0].datecreated).format('LLL') %></p>
                                                     <div class="grid mza w-25 pb-14">
-                                                        <p><%= results[2][0].postscount %> Posts</p>
-                                                        <a class="brown" href="/users/<%= results[0][0].id %>/following"><p><%= results[3][0].followingcount %> Following</p></a>
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>"><p><%= results[2][0].postscount %> Posts</p></a>
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>/following"><p><span id="followingcount"><%= results[3][0].followingcount %></span> Following</p></a>
                                                     </div>
-
+                                                    <div class="grid mza w-25 pb-14">
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>/comments"><p><%= results[4][0].commentscount %> Comments</p></a>
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>/upvotes"><p><%= results[5][0].upvotescount %> Upvotes</p></a>
+                                                    </div>
                                                     <p class="mza w-60"><%= results[0][0].description %></p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
 
                                 </div>
                             </div>
@@ -40,30 +43,24 @@
                         </div>
 
                         <% if (results[1].length > 0) { %>
-                        <div id="count" class="et_pb_section et_pb_section_1 et_section_specialty pt-none" data-count=<%= results[3][0].followingcount %>>
-                            <div class="et_pb_row">
-                                <!--<div id="gallery" class="gallery">-->
-                                    <!--<% for(var i=0; i < results[1].length; i++) { %>-->
-                                    <!--<div class="gallery-item">-->
-                                        <!--<a class="gallery-item-a mr-none" href="/topics/<%= results[1][i].id %>"><img class="gallery-item-img" src="<%= results[1][i].imageurl %>" alt="">-->
-                                        <!--</a>-->
-                                    <!--</div>-->
-                                    <!--<% } %>-->
-                                <!--</div>-->
+                        <div class="et_pb_section et_pb_section_1 et_section_specialty pt-none">
+                            <div class="et_pb_row" id="container">
+                                <% for(var i=0; i < results[1].length; i++) { %>
+                                <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none container-item" style="">
+                                    <div class="et_pb_blurb_content">
 
-                                <div id="gallery" class="gallery">
-                                    <% for(var i=0; i < results[1].length; i++) { %>
-                                    <div class="gallery-item relative">
-                                        <img class="gallery-item-img" src="<%= results[1][i].imageurl %>" alt="">
-                                        <a class="absolute flex-imp width-100p height-100p t0 justify align-items" href="/topics/<%= results[1][i].id %>">
-                                            <span class="white fs-20 fwb"><%= results[1][i].name %></span>
-                                        </a>
+                                        <div class="et_pb_blurb_container">
+                                            <a href="/topics/<%= results[1][i].id %>"><h4 class="et_pb_module_header"><%= results[1][i].name %></h4></a>
+                                            <div class="et_pb_blurb_description">
+                                                <img class=" "src="<%= results[1][i].imageurl %>">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <% } %>
                                 </div>
+                                <% } %>
 
-                                <div id="loadMore">
-                                </div>
+                            </div>
+                            <div id="loadMore">
                             </div>
                         </div>
                         <% } %>

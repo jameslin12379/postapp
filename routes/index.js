@@ -59,7 +59,7 @@ function resourceExists(req, res, next) {
         case 'u':
             query = 'SELECT id FROM user';
             break;
-        case 'i':
+        case 'p':
             query = 'SELECT id FROM post';
             break;
         case 't':
@@ -81,7 +81,10 @@ function resourceExists(req, res, next) {
         if (error) {
             throw error;
         }
+        console.log(results);
+
         if (results.length === 0){
+            console.log('apple');
             res.redirect('/404');
         }
         return next();
@@ -98,7 +101,7 @@ router.get('/', function(req, res, next) {
         });
     }
     connection.query('SELECT count(*) as status FROM topicfollowing WHERE following = ?', [req.user.id],
-        function (error, results, fields) {I
+        function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
         // fields will contain information about the returned results fields (if any)
@@ -196,7 +199,7 @@ router.get('/users/:id', resourceExists, function(req, res){
     connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?; SELECT id, ' +
         'name, description, imageurl, datecreated FROM post WHERE userid = ? ORDER BY datecreated DESC LIMIT 10; SELECT count(*) ' +
         'as postscount FROM post WHERE userid = ?;SELECT count(*) as followingcount FROM topicfollowing WHERE following = ?;' +
-        'SELECT count(*) as commentscount FROM comment WHERE userid = ?;SELECT count(*) as likescount FROM upvote WHERE upvote = ?;',
+        'SELECT count(*) as commentscount FROM comment WHERE userid = ?;SELECT count(*) as upvotescount FROM upvote WHERE upvote = ?;',
         [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
@@ -216,11 +219,11 @@ router.get('/users/:id', resourceExists, function(req, res){
 
 /// GET request for user following sorted by created date in descending order limit by 10
 router.get('/users/:id/following', resourceExists, function(req, res){
-    connection.query('SELECT id, username, datecreated, description, imageurl FROM user WHERE id = ?;SELECT t.id, ' +
+    connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?; SELECT t.id, ' +
         't.name, t.imageurl from topicfollowing as tf inner join topic as t on tf.followed = t.id where tf.following ' +
         '= ? ORDER BY tf.datecreated DESC LIMIT 10; SELECT count(*) as postscount FROM post WHERE userid = ?;SELECT count(*) ' +
         'as followingcount FROM topicfollowing WHERE following = ?; SELECT count(*) as commentscount FROM comment WHERE userid = ?;' +
-        'SELECT count(*) as likescount FROM upvote WHERE upvote = ?;',
+        'SELECT count(*) as upvotescount FROM upvote WHERE upvote = ?;',
         [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id], function (error, results, fields) {
             // error will be an Error if one occurred during the query
             // results will contain the results of the query
@@ -240,10 +243,10 @@ router.get('/users/:id/following', resourceExists, function(req, res){
 
 /// GET request for user comments sorted by created date in descending order limit by 10
 router.get('/users/:id/comments', resourceExists, function(req, res){
-    connection.query('SELECT id, username, datecreated, description, imageurl FROM user WHERE id = ?;SELECT id, ' +
+    connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?;SELECT id, ' +
         'description, datecreated FROM comment WHERE userid = ? ORDER BY datecreated DESC LIMIT 10; SELECT count(*) as postscount FROM post WHERE userid = ?; SELECT' +
         ' count(*) as followingcount FROM topicfollowing WHERE following = ?;SELECT count(*) as commentscount FROM comment WHERE userid = ?;' +
-        'SELECT count(*) as likescount FROM upvote WHERE upvote = ?;',
+        'SELECT count(*) as upvotescount FROM upvote WHERE upvote = ?;',
         [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id], function (error, results, fields) {
             // error will be an Error if one occurred during the query
             // results will contain the results of the query
@@ -255,6 +258,29 @@ router.get('/users/:id/comments', resourceExists, function(req, res){
                 req: req,
                 results: results,
                 title: 'User comments',
+                moment: moment,
+                alert: req.flash('alert')
+            });
+        });
+});
+
+/// GET request for user upvotes sorted by created date in descending order limit by 10
+router.get('/users/:id/upvotes', resourceExists, function(req, res){
+    connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?;SELECT p.id, p.id, p.name,' +
+        'p.description, p.imageurl, p.datecreated from upvote as up inner join post as p on up.upvoted = p.id where up.upvote = ? ORDER BY up.datecreated DESC LIMIT 10; SELECT count(*) as postscount FROM post WHERE userid = ?; SELECT' +
+        ' count(*) as followingcount FROM topicfollowing WHERE following = ?;SELECT count(*) as commentscount FROM comment WHERE userid = ?;' +
+        'SELECT count(*) as upvotescount FROM upvote WHERE upvote = ?;',
+        [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id], function (error, results, fields) {
+            // error will be an Error if one occurred during the query
+            // results will contain the results of the query
+            // fields will contain information about the returned results fields (if any)
+            if (error) {
+                throw error;
+            }
+            res.render('users/upvotes', {
+                req: req,
+                results: results,
+                title: 'User upvotes',
                 moment: moment,
                 alert: req.flash('alert')
             });
@@ -378,21 +404,24 @@ router.delete('/users/:id', resourceExists, isAuthenticated, isSelf, function(re
     });
 });
 
-/// IMAGE ROUTES ///
+/// POST ROUTES ///
 // GET request for creating a Image. NOTE This must come before routes that display Image (uses id).
-router.get('/images/new', isAuthenticated, function(req, res){
-    res.render('images/new', {
+router.get('/posts/new', isAuthenticated, function(req, res){
+    res.render('posts/new', {
         req: req,
-        title: 'Upload',
+        title: 'Post',
         errors: req.flash('errors'),
         inputs: req.flash('inputs')
     });
 });
 
 // POST request for creating Image.
-router.post('/images', isAuthenticated, upload.single('file'), [
-        // validation
+router.post('/posts', isAuthenticated, upload.single('file'), [
+        body('name', 'Empty name.').not().isEmpty(),
+        body('description', 'Empty description.').not().isEmpty(),
         body('topic', 'Empty topic').not().isEmpty(),
+        body('name', 'Name must be between 5-200 characters.').isLength({min:5, max:200}),
+        body('description', 'Description must be between 5-300 characters.').isLength({min:5, max:300})
     ], (req, res) => {
         const errors = validationResult(req);
         let errorsarray = errors.array();
@@ -412,19 +441,21 @@ router.post('/images', isAuthenticated, upload.single('file'), [
             // There are errors. Render form again with sanitized values/errors messages.
             // Error messages can be returned in an array using `errors.array()`.
             req.flash('errors', errorsarray);
-            req.flash('inputs', {topic: req.body.topic});
-            res.redirect('/images/new');
+            req.flash('inputs', {name: req.body.name, description: req.body.description, topic: req.body.topic});
+            res.redirect('/posts/new');
         }
         else {
-            // const redirect = req.query.redirect;
-            // Data from form is valid.
+            sanitizeBody('name').trim().escape();
+            sanitizeBody('description').trim().escape();
             sanitizeBody('topic').trim().escape();
+            const name = req.body.name;
+            const description = req.body.description;
             const topic = req.body.topic;
             // upload image to AWS, get imageurl, insert row into DB with title, description, topic, imageurl, currentuserid, and
             // meta data fields for image (size, type, etc...)
             // console.log(req.file);
             const uploadParams = {
-                Bucket: 'imageappbucket', // pass your bucket name
+                Bucket: 'postappbucket', // pass your bucket name
                 Key: 'images/' + req.file.originalname, // file will be saved as testBucket/contacts.csv
                 Body: req.file.buffer,
                 ContentType: req.file.mimetype
@@ -433,16 +464,15 @@ router.post('/images', isAuthenticated, upload.single('file'), [
                 if (err) {
                     console.log("Error", err);
                 } if (data) {
-                    connection.query('INSERT INTO image (imageurl, userid, topicid, originalname, ' +
-                        'encoding, mimetype, size) VALUES (?, ?, ?, ?, ?, ?, ?)', [data.Location,
-                    req.user.id, topic, req.file.originalname, req.file.encoding, req.file.mimetype, req.file.size], function (error, results, fields) {
+                    connection.query('INSERT INTO post (name, description, imageurl, userid, topicid) VALUES ' +
+                        '(?, ?, ?, ?, ?)', [name, description, data.Location, req.user.id, topic], function (error, results, fields) {
                         // error will be an Error if one occurred during the query
                         // results will contain the results of the query
                         // fields will contain information about the returned results fields (if any)
                         if (error) {
                             throw error;
                         }
-                        req.flash('alert', 'Photo uploaded.');
+                        req.flash('alert', 'Post created.');
                         res.redirect(`/users/${req.user.id}`);
                     });
                     // console.log("Upload Success", data.Location);
@@ -452,19 +482,20 @@ router.post('/images', isAuthenticated, upload.single('file'), [
     }
 );
 
-// GET request for one Image.
-router.get('/images/:id', resourceExists, function(req, res){
-    connection.query('select i.id, i.imageurl, i.datecreated, i.userid, i.topicid, u.username, t.name from image as i inner join user as u on i.userid = u.id inner join topic as t on i.topicid = t.id where i.id = ?', [req.params.id], function (error, results, fields) {
+// GET request for one Post.
+router.get('/posts/:id', resourceExists, function(req, res){
+    connection.query('select p.id, p.name, p.description, p.imageurl, p.datecreated, p.userid, p.topicid, u.username, t.name as topicname from post as p inner join user as u on p.userid = u.id inner join topic as t on p.topicid = t.id where p.id = ?', [req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
         // fields will contain information about the returned results fields (if any)
         if (error) {
             throw error;
         }
-        res.render('images/show', {
+        console.log(results);
+        res.render('posts/show', {
             req: req,
-            result: results[0],
-            title: 'Photo',
+            results: results,
+            title: 'Post',
             moment: moment,
             alert: req.flash('alert')
         });

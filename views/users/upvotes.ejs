@@ -27,14 +27,16 @@
                                                         <a class="brown" href="/users/<%= results[0][0].id %>/following"><p><%= results[3][0].followingcount %> Following</p></a>
                                                     </div>
                                                     <div class="grid mza w-25 pb-14">
-                                                        <a class="brown" href="/users/<%= results[0][0].id %>/comments"><p><span id="commentscount"><%= results[4][0].commentscount %></span> Comments</p></a>
-                                                        <a class="brown" href="/users/<%= results[0][0].id %>/upvotes"><p><%= results[5][0].upvotescount %> Upvotes</p></a>
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>/comments"><p><%= results[4][0].commentscount %> Comments</p></a>
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>/upvotes"><p><span id="upvotescount"><%= results[5][0].upvotescount %></span> Upvotes</p></a>
                                                     </div>
                                                     <p class="mza w-60"><%= results[0][0].description %></p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+
                                 </div>
                             </div>
 
@@ -48,10 +50,10 @@
                                     <div class="et_pb_blurb_content">
 
                                         <div class="et_pb_blurb_container">
-                                            <a href="/comments/<%= results[1][i].id %>"><h4 class="et_pb_module_header"><%= results[1][i].description %></h4></a>
+                                            <a href="/posts/<%= results[1][i].id %>"><h4 class="et_pb_module_header"><%= results[1][i].name %></h4></a>
                                             <div class="et_pb_blurb_description">
-
-
+                                                <p><%= results[1][i].description %></p>
+                                                <img class=" "src="<%= results[1][i].imageurl %>">
                                                 <p><strong><%= moment(results[1][i].datecreated).format('LLL') %></strong></p>
                                             </div>
                                         </div>
@@ -74,7 +76,7 @@
 </div>
 
 <% if (results[1].length > 0) { %>
-<script src="/javascripts/userloadmorecomments.js"></script>
+<script src="/javascripts/userloadmoreupvotes.js"></script>
 <% } %>
 
 <% include ../partials/footer %>

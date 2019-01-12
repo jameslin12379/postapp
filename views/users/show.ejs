@@ -23,12 +23,12 @@
                                                 <div class="et_pb_blurb_description">
                                                     <p>Joined <%= moment(results[0][0].datecreated).format('LLL') %></p>
                                                     <div class="grid mza w-25 pb-14">
-                                                        <a class="brown" href="/users/<%= results[0][0].id %>"><p><%= results[2][0].postscount %> Posts</p></a>
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>"><p><span id="postscount"><%= results[2][0].postscount %></span> Posts</p></a>
                                                         <a class="brown" href="/users/<%= results[0][0].id %>/following"><p><%= results[3][0].followingcount %> Following</p></a>
                                                     </div>
                                                     <div class="grid mza w-25 pb-14">
                                                         <a class="brown" href="/users/<%= results[0][0].id %>/comments"><p><%= results[4][0].commentscount %> Comments</p></a>
-                                                        <a class="brown" href="/users/<%= results[0][0].id %>/likes"><p><%= results[5][0].likescount %> Likes</p></a>
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>/upvotes"><p><%= results[5][0].upvotescount %> Upvotes</p></a>
                                                     </div>
                                                     <p class="mza w-60"><%= results[0][0].description %></p>
                                                 </div>
@@ -52,7 +52,7 @@
                         </div>
 
                         <% if (results[1].length > 0) { %>
-                        <div id="count" class="et_pb_section et_pb_section_1 et_section_specialty pt-none" data-count=<%= results[2][0].postscount %>>
+                        <div class="et_pb_section et_pb_section_1 et_section_specialty pt-none">
                             <div class="et_pb_row" id="container">
                                 <% for(var i=0; i < results[1].length; i++) { %>
                                 <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none container-item" style="">

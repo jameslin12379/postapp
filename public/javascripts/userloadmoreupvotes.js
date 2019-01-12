@@ -53,8 +53,8 @@
 
 const loadMore = document.querySelector('#loadMore');
 const container = document.querySelector('#container');
-const API_URL = window.location.hostname.includes("dev") ? 'https://api.post67.com.dev/topicfollowings' : 'https://api.post67.com/topicfollowings';
-const API_URL2 = window.location.hostname.includes("dev") ? 'https://api.post67.com.dev/topics' : 'https://api.post67.com/topics';
+const API_URL = window.location.hostname.includes("dev") ? 'https://api.post67.com.dev/upvotes' : 'https://api.post67.com/upvotes';
+const API_URL2 = window.location.hostname.includes("dev") ? 'https://api.post67.com.dev/posts' : 'https://api.post67.com/posts';
 let url = window.location.href;
 const lastcharacter = url[url.length-1];
 if (lastcharacter === '/'){
@@ -63,7 +63,7 @@ if (lastcharacter === '/'){
 url = url.substring(0, url.lastIndexOf('/'));
 let userid = url.substring(url.lastIndexOf('/')+1);
 let count = document.getElementsByClassName('container-item').length;
-let total = Number(document.getElementById('followingcount').innerText);
+let total = Number(document.getElementById('upvotescount').innerText);
 let skip = count;
 let limit = 10;
 let loading = false;
@@ -73,15 +73,15 @@ document.addEventListener('scroll', () => {
     if (rect.top < window.innerHeight && !loading) {
         loading = true;
         if (count < total) {
-            fetch(`${API_URL}?filter[fields][followed]=true&filter[where][following]=${userid}&filter[order]=datecreated%20DESC&filter[limit]=${limit}&filter[skip]=${skip}`).then(response => response.json())
+            fetch(`${API_URL}?filter[fields][upvoted]=true&filter[where][upvote]=${userid}&filter[order]=datecreated%20DESC&filter[limit]=${limit}&filter[skip]=${skip}`).then(response => response.json())
                 .then(result => {
-                    let topicids = [];
+                    let postids = [];
                     for (let i = 0; i < result.length; i++) {
-                        topicids.push(result[i].followed);
+                        postids.push(result[i].upvoted);
                     }
-                    fetch(`${API_URL2}?filter={"where":{"id":{"inq":[${topicids}]}}}`).then(response => response.json())
+                    fetch(`${API_URL2}?filter={"where":{"id":{"inq":[${postids}]}}}`).then(response => response.json())
                         .then(r => {
-                            r.forEach(topic => {
+                            r.forEach(post => {
                                 const div = document.createElement('div');
                                 div.classList.add("et_pb_module");
                                 div.classList.add("et_pb_blurb");
@@ -97,20 +97,28 @@ document.addEventListener('scroll', () => {
                                 const div3 = document.createElement('div');
                                 div3.classList.add("et_pb_blurb_container");
                                 const link = document.createElement('a');
-                                link.setAttribute("href", `/topics/${topic.id}`);
+                                link.setAttribute("href", `/posts/${post.id}`);
                                 const h4 = document.createElement('h4');
                                 h4.classList.add("et_pb_module_header");
-                                h4.innerText = topic.name;
+                                h4.innerText = post.name;
                                 const div4 = document.createElement('div');
                                 div4.classList.add("et_pb_blurb_description");
+                                const p1 = document.createElement('p');
+                                p1.innerText = post.description;
                                 const i = document.createElement('img');
-                                i.setAttribute("src", topic.imageurl);
+                                i.setAttribute("src", post.imageurl);
+                                const p2 = document.createElement('p');
+                                const str = document.createElement('strong');
+                                str.innerText = moment(post.datecreated).format('LLL');
                                 div.appendChild(div2);
                                 div2.appendChild(div3);
                                 div3.appendChild(link);
                                 link.appendChild(h4);
                                 div3.appendChild(div4);
+                                div4.appendChild(p1);
                                 div4.appendChild(i);
+                                div4.appendChild(p2);
+                                p2.appendChild(str);
                                 container.appendChild(div);
                             });
                             count = document.getElementsByClassName('container-item').length;

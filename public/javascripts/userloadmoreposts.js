@@ -3,7 +3,6 @@
 // 10 posts and if successful append them into the page
 // stop sending ajax requests when there are no more posts
 
-
 const loadMore = document.querySelector('#loadMore');
 const container = document.querySelector('#container');
 const API_URL = window.location.hostname.includes("dev") ? 'https://api.post67.com.dev/posts' : 'https://api.post67.com/posts';
@@ -14,7 +13,7 @@ if (lastcharacter === '/'){
 }
 let userid = url.substring(url.lastIndexOf('/') + 1);
 let count = document.getElementsByClassName('container-item').length;
-let total = Number(document.getElementById('count').getAttribute('data-count'));
+let total = Number(document.getElementById('postscount').innerText);
 let skip = count;
 let limit = 10;
 let loading = false;
@@ -25,7 +24,6 @@ document.addEventListener('scroll', () => {
         loading = true;
         if (count < total) {
             fetch(`${API_URL}?filter[fields][id]=true&filter[fields][name]=true&filter[fields][description]=true&filter[fields][imageurl]=true&filter[fields][datecreated]=true&filter[where][userid]=${userid}&filter[order]=datecreated%20DESC&filter[limit]=${limit}&filter[skip]=${skip}`).then(response => response.json()).then(result => {
-                console.log(result);
                 result.forEach(post => {
                         const div = document.createElement('div');
                         div.classList.add("et_pb_module");
@@ -54,7 +52,7 @@ document.addEventListener('scroll', () => {
                         i.setAttribute("src", post.imageurl);
                         const p2 = document.createElement('p');
                         const str = document.createElement('strong');
-                        str.innerText = post.datecreated;
+                        str.innerText = moment(post.datecreated).format('LLL');
                         div.appendChild(div2);
                         div2.appendChild(div3);
                         div3.appendChild(link);
@@ -69,7 +67,6 @@ document.addEventListener('scroll', () => {
                         count = document.getElementsByClassName('container-item').length;
                         skip = count;
                         loading = false;
-                        console.log(count);
                 });
         }
     }

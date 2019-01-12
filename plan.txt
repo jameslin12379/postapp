@@ -49,21 +49,23 @@
       - /users/new GET x
       - /users POST x
       - /users/id GET x
-      - /users/id/following GET
-      - /users/id/comments GET
-      - /users/id/upvotes GET
-      - /users GET (Disabled)
-      - /users/id/edit GET
-      - /users/id PUT
-      - /users/id DELETE
-      image
-      - /images/new GET
-      - /images POST
-      - /images/id GET
-      - /images GET (Disabled)
-      - /images/id/edit GET (Disabled)
-      - /images/id PUT (Disabled)
-      - /images/id DELETE
+      - /users/id/following GET x
+      - /users/id/comments GET x
+      - /users/id/upvotes GET x
+      - /users GET (Disabled) x
+      - /users/id/edit GET x
+      - /users/id PUT x
+      - /users/id DELETE x
+      post
+      - /posts/new GET x
+      - /posts POST x
+      - /posts/id GET
+      - /posts/id/comments GET (implemented on same page)
+      - /posts/id/upvotes GET (implemented on same page)
+      - /posts GET (Disabled)
+      - /posts/id/edit GET
+      - /posts/id PUT
+      - /posts/id DELETE
       topic
       - /topics/new GET (Disabled)
       - /topics POST (Disabled)
@@ -81,6 +83,9 @@
       - /topicfollowings/id/edit GET (Disabled)
       - /topicfollowings/id PUT (Disabled)
       - /topicfollowings/id DELETE
+      comment
+      upvote
+
       other routes
       - / GET
       - /login GET

@@ -92,7 +92,7 @@
                         <li id="menu-item-209484" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-209484"><a href="/login" class="<% if (title === 'Log in') { %>currentpage<% } %>">Log in</a></li>
                         <% } else { %>
                         <li id="menu-item-209484" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-209484"><a id="currentid" href="/users/<%= req.user.id %>" class="<% if (title === 'Profile') { %>currentpage<% } %>"><%= req.user.username %></a></li>
-                        <li id="menu-item-209484" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-209484"><a href="/images/new" class="<% if (title === 'Upload') { %>currentpage<% } %>">Upload</a></li>
+                        <li id="menu-item-209484" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-209484"><a href="/posts/new" class="<% if (title === 'Post') { %>currentpage<% } %>">Post</a></li>
                         <li id="menu-item-209484" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-209484"><a href="/logout">Log out</a></li>
                         <% } %>
                     </ul> </nav>

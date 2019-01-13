@@ -65,7 +65,7 @@
       - /posts GET (Disabled)
       - /posts/id/edit GET x
       - /posts/id PUT x
-      - /posts/id DELETE
+      - /posts/id DELETE x
       topic
       - /topics/new GET (Disabled)
       - /topics POST (Disabled)
@@ -84,6 +84,13 @@
       - /topicfollowings/id PUT (Disabled)
       - /topicfollowings/id DELETE
       comment
+      - /comments/new GET (Replaced by form within post page)
+      - /comments POST (Replaced by ajax post)
+      - /comments/id GET
+      - /comments GET (Disabled)
+      - /comments/id/edit GET (Disabled)
+      - /comments/id PUT (Disabled)
+      - /comments/id DELETE
       upvote
 
       other routes
@@ -91,8 +98,8 @@
       - /login GET x
       - /login POST x
       - /logout GET x
-      - /403 GET x
-      - /404 GET x
+      - /403 GET x (Replaced by rendering 403 view)
+      - /404 GET x (Replaced by rendering 404 view)
 ---> Controllers (Defined for each route)
 ---> Models(ORM) / SQL
 ---> Views (Defined for each route)

@@ -326,7 +326,7 @@ router.get('/users/:id/upvotes', isResource, function(req, res){
 
 // GET request to update User.
 router.get('/users/:id/edit', isResource, isAuthenticated, isOwnResource, function(req, res){
-    connection.query('SELECT id, email, username, description FROM user WHERE id = ?', [req.params.id],
+    connection.query('SELECT id, email, username, description, imageurl FROM user WHERE id = ?', [req.params.id],
         function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
@@ -336,7 +336,7 @@ router.get('/users/:id/edit', isResource, isAuthenticated, isOwnResource, functi
         }
         res.render('users/edit', {
             req: req,
-            result: results[0],
+            results: results,
             title: 'Edit profile',
             errors: req.flash('errors'),
             inputs: req.flash('inputs')
@@ -351,7 +351,7 @@ router.put('/users/:id', isResource, isAuthenticated, isOwnResource, upload.sing
     body('description', 'Empty password').not().isEmpty(),
     body('email', 'Email must be between 5-200 characters.').isLength({min:5, max:200}),
     body('username', 'Username must be between 5-200 characters.').isLength({min:5, max:200}),
-    body('description', 'Username must be between 5-500 characters.').isLength({min:5, max:500}),
+    body('description', 'Description must be between 5-500 characters.').isLength({min:5, max:500}),
     body('email', 'Invalid email').isEmail()
 ], (req, res) => {
     // check if inputs are valid
@@ -402,7 +402,7 @@ router.put('/users/:id', isResource, isAuthenticated, isOwnResource, upload.sing
                 if (req.user.imageurl !== 'https://s3.amazonaws.com/postappbucket/profiles/blank-profile-picture-973460_640.png'){
                     const uploadParams2 = {
                         Bucket: 'postappbucket', // pass your bucket name
-                        Key: 'profiles/' + req.user.imageurl.substring(req.user.imageurl.lastIndexOf('/') + 1) // file will be saved as testBucket/contacts.csv
+                        Key: 'profiles/' + req.body.imageurl.substring(req.body.imageurl.lastIndexOf('/') + 1) // file will be saved as testBucket/contacts.csv
                     };
                     s3.deleteObject(uploadParams2, function(err, data) {
                         if (err) console.log(err, err.stack);  // error
@@ -440,7 +440,7 @@ router.delete('/users/:id', isResource, isAuthenticated, isOwnResource, function
 });
 
 /// POST ROUTES ///
-// GET request for creating a Image. NOTE This must come before routes that display Image (uses id).
+// GET request for creating a Post. NOTE This must come before routes that display Post (uses id).
 router.get('/posts/new', isAuthenticated, function(req, res){
     res.render('posts/new', {
         req: req,
@@ -450,7 +450,7 @@ router.get('/posts/new', isAuthenticated, function(req, res){
     });
 });
 
-// POST request for creating Image.
+// POST request for creating Post.
 router.post('/posts', isAuthenticated, upload.single('file'), [
         body('name', 'Empty name.').not().isEmpty(),
         body('description', 'Empty description.').not().isEmpty(),
@@ -520,7 +520,8 @@ router.post('/posts', isAuthenticated, upload.single('file'), [
 // GET request for one Post.
 router.get('/posts/:id', isResource, function(req, res){
     connection.query('select p.id, p.name, p.description, p.imageurl, p.datecreated, p.userid, p.topicid, ' +
-        'u.username, t.name as topicname from post as p inner join user as u on p.userid = u.id inner join topic as t on p.topicid = t.id where p.id = ?', [req.params.id], function (error, results, fields) {
+        'u.username, t.name as topicname from post as p inner join user as u on p.userid = u.id inner join topic as t on p.topicid = t.id where p.id = ?' +
+        '; SELECT id, description, datecreated, userid FROM comment as c inner join WHERE userid = ? ORDER BY datecreated DESC LIMIT 10;SELECT count(*) as commentscount FROM comment WHERE postid = ?;', [req.params.id, req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
         // fields will contain information about the returned results fields (if any)
@@ -540,7 +541,7 @@ router.get('/posts/:id', isResource, function(req, res){
 
 // GET request to update Post.
 router.get('/posts/:id/edit', isResource, isAuthenticated, isOwnResource, function(req, res){
-    connection.query('SELECT id, name, description, topicid FROM post WHERE id = ?', [req.params.id],
+    connection.query('SELECT id, name, description, imageurl, topicid FROM post WHERE id = ?', [req.params.id],
         function (error, results, fields) {
             // error will be an Error if one occurred during the query
             // results will contain the results of the query
@@ -548,26 +549,23 @@ router.get('/posts/:id/edit', isResource, isAuthenticated, isOwnResource, functi
             if (error) {
                 throw error;
             }
-            console.log(results);
-            // res.render('posts/edit', {
-            //     req: req,
-            //     result: results[0],
-            //     title: 'Edit post',
-            //     errors: req.flash('errors'),
-            //     inputs: req.flash('inputs')
-            // });
+            res.render('posts/edit', {
+                req: req,
+                results: results,
+                title: 'Edit post',
+                errors: req.flash('errors'),
+                inputs: req.flash('inputs')
+            });
         });
 });
 
-// PUT request to update User.
-router.put('/users/:id', isResource, isAuthenticated, isOwnResource, upload.single('file'), [
-    body('email', 'Empty email').not().isEmpty(),
-    body('username', 'Empty username').not().isEmpty(),
-    body('description', 'Empty password').not().isEmpty(),
-    body('email', 'Email must be between 5-200 characters.').isLength({min:5, max:200}),
-    body('username', 'Username must be between 5-200 characters.').isLength({min:5, max:200}),
-    body('description', 'Username must be between 5-500 characters.').isLength({min:5, max:500}),
-    body('email', 'Invalid email').isEmail()
+// PUT request to update Post.
+router.put('/posts/:id', isResource, isAuthenticated, isOwnResource, upload.single('file'), [
+    body('name', 'Empty name.').not().isEmpty(),
+    body('description', 'Empty description.').not().isEmpty(),
+    body('topic', 'Empty topic').not().isEmpty(),
+    body('name', 'Name must be between 5-200 characters.').isLength({min:5, max:200}),
+    body('description', 'Description must be between 5-300 characters.').isLength({min:5, max:300})
 ], (req, res) => {
     // check if inputs are valid
     // if yes then upload picture to S3, get new imageurl, check existing imageurl and if it is not
@@ -591,22 +589,22 @@ router.put('/users/:id', isResource, isAuthenticated, isOwnResource, upload.sing
         // There are errors. Render form again with sanitized values/errors messages.
         // Error messages can be returned in an array using `errors.array()`.
         req.flash('errors', errorsarray);
-        req.flash('inputs', {email: req.body.email, username: req.body.username, description: req.body.description});
+        req.flash('inputs', {name: req.body.name, description: req.body.description, topicid: req.body.topic});
         res.redirect(req._parsedOriginalUrl.pathname + '/edit');
     }
     else {
-        sanitizeBody('email').trim().escape();
-        sanitizeBody('username').trim().escape();
+        sanitizeBody('name').trim().escape();
         sanitizeBody('description').trim().escape();
-        const email = req.body.email;
-        const username = req.body.username;
+        sanitizeBody('topic').trim().escape();
+        const name = req.body.name;
         const description = req.body.description;
+        const topic = req.body.topic;
         // upload image to AWS, get imageurl, check existing imageurl and if not pointing to default profile picture,
         // delete associated image from bucket, update row from DB with email, username, description, imageurl
         // console.log(req.file);
         const uploadParams = {
             Bucket: 'postappbucket', // pass your bucket name
-            Key: 'profiles/' + req.file.originalname, // file will be saved as testBucket/contacts.csv
+            Key: 'images/' + req.file.originalname, // file will be saved as testBucket/contacts.csv
             Body: req.file.buffer,
             ContentType: req.file.mimetype
         };
@@ -614,24 +612,23 @@ router.put('/users/:id', isResource, isAuthenticated, isOwnResource, upload.sing
             if (err) {
                 console.log("Error", err);
             } if (data) {
-                if (req.user.imageurl !== 'https://s3.amazonaws.com/postappbucket/profiles/blank-profile-picture-973460_640.png'){
                     const uploadParams2 = {
                         Bucket: 'postappbucket', // pass your bucket name
-                        Key: 'profiles/' + req.user.imageurl.substring(req.user.imageurl.lastIndexOf('/') + 1) // file will be saved as testBucket/contacts.csv
+                        Key: 'images/' + req.body.imageurl.substring(req.body.imageurl.lastIndexOf('/') + 1) // file will be saved as testBucket/contacts.csv
                     };
                     s3.deleteObject(uploadParams2, function(err, data) {
                         if (err) console.log(err, err.stack);  // error
                         else     console.log();                 // deleted
                     });
-                }
-                connection.query('UPDATE user SET email = ?, username = ?, description = ?, imageurl = ? WHERE id = ?', [email, username, description, data.Location, req.params.id], function (error, results, fields) {
+
+                connection.query('UPDATE post SET name = ?, description = ?, imageurl = ?, topicid = ? WHERE id = ?', [name, description, data.Location, topic, req.params.id], function (error, results, fields) {
                     // error will be an Error if one occurred during the query
                     // results will contain the results of the query
                     // fields will contain information about the returned results fields (if any)
                     if (error) {
                         throw error;
                     }
-                    req.flash('alert', 'Profile edited.');
+                    req.flash('alert', 'Post edited.');
                     res.redirect(req._parsedOriginalUrl.pathname);
                 });
             }
@@ -640,29 +637,17 @@ router.put('/users/:id', isResource, isAuthenticated, isOwnResource, upload.sing
 });
 
 
-// DELETE request to delete Image.
-router.delete('/images/:id', isResource, isAuthenticated, function(req, res){
-    connection.query('SELECT userid FROM image WHERE id = ?', [req.params.id], function (error, results, fields) {
+// DELETE request to delete Post.
+router.delete('/posts/:id', isResource, isAuthenticated, isOwnResource, function(req, res){
+    connection.query('DELETE FROM post WHERE id = ?', [req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
         // fields will contain information about the returned results fields (if any)
         if (error) {
             throw error;
         }
-        const userid = results[0].userid;
-        if (req.user.id !== userid) {
-            res.redirect('/403');
-        }
-        connection.query('DELETE FROM image WHERE id = ?', [req.params.id], function (error, results, fields) {
-            // error will be an Error if one occurred during the query
-            // results will contain the results of the query
-            // fields will contain information about the returned results fields (if any)
-            if (error) {
-                throw error;
-            }
-            req.flash('alert', 'Photo deleted.');
-            res.redirect(`/users/${req.user.id}`);
-        });
+        req.flash('alert', 'Post deleted.');
+        res.redirect(`/users/${req.user.id}`);
     });
 });
 

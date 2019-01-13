@@ -14,7 +14,7 @@
 
                                         <div class="et_pb_newsletter_form">
                                             <h1 class="text-center pb-2 fw-700 lh-13 white">Edit profile</h1>
-                                            <form action="/users/<%= result.id %>?_method=PUT" method="post" enctype="multipart/form-data">
+                                            <form action="/users/<%= results[0].id %>?_method=PUT" method="post" enctype="multipart/form-data">
 
                                                 <% if (errors.length > 0) { %>
                                                 <% for(var i = 0; i < errors.length; i++) { %>
@@ -29,16 +29,17 @@
                                                 <!--</div>-->
                                                 <div class="et_pb_newsletter_fields">
                                                     <p class="et_pb_newsletter_field et_pb_contact_field_last">
-                                                        <input class="input" type="email" placeholder="Email address" name="email" value="<%if (inputs.length > 0) { %><%= inputs[0].email %><% }else{ %><%= result.email %><% } %>" required autofocus>
+                                                        <input class="input" type="email" placeholder="Email address" name="email" value="<%if (inputs.length > 0) { %><%= inputs[0].email %><% }else{ %><%= results[0].email %><% } %>" required autofocus>
                                                     </p>
                                                     <p class="et_pb_newsletter_field et_pb_contact_field_last">
-                                                        <input class="input" type="text" placeholder="Username" name="username" value="<%if (inputs.length > 0) { %><%= inputs[0].username %><% }else{ %><%= result.username %><% } %>" required>
+                                                        <input class="input" type="text" placeholder="Username" name="username" value="<%if (inputs.length > 0) { %><%= inputs[0].username %><% }else{ %><%= results[0].username %><% } %>" required>
                                                     </p>
                                                     <p class="et_pb_newsletter_field et_pb_contact_field_last">
-                                                        <textarea class="input" name="description" rows="5" cols="5"><%if (inputs.length > 0) { %><%= inputs[0].description %><% }else{ %><%= result.description %><% } %></textarea>
+                                                        <textarea class="input" name="description" rows="5" cols="5" required><%if (inputs.length > 0) { %><%= inputs[0].description %><% }else{ %><%= results[0].description %><% } %></textarea>
                                                     </p>
                                                     <p class="et_pb_newsletter_field et_pb_contact_field_last">
                                                         <input type="file" class="input" name="file" accept="image/*" required>
+                                                        <input name="imageurl" type="hidden" value="<%= results[0].imageurl %>">
                                                     </p>
                                                     <button class="submit-button" type="submit" data-icon="">Submit</button>
                                                 </div>

@@ -15,18 +15,21 @@
                                     </div>
                                     <% } %>
 
-                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none container-item" style="">
+                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none" style="">
                                         <div class="et_pb_blurb_content">
                                             <div class="et_pb_blurb_container">
-                                                <a href="/posts/<%= results[0].id %>"><h4 class="et_pb_module_header"><%= results[0].name %></h4></a>
+                                                <a href="/posts/<%= results[0][0].id %>"><h4 class="et_pb_module_header"><%= results[0][0].name %></h4></a>
 
                                                 <div class="et_pb_blurb_description">
-                                                    <p><%= results[0].description %></p>
-                                                    <img class=" "src="<%= results[0].imageurl %>">
-                                                    <p><strong><%= moment(results[0].datecreated).format('LLL') %></strong></p>
+                                                    <p><%= results[0][0].description %></p>
+                                                    <img class=" "src="<%= results[0][0].imageurl %>">
+                                                    <p><strong><%= moment(results[0][0].datecreated).format('LLL') %></strong></p>
                                                     <div class="flex">
-                                                        <a class="brown mr-1" href="/users/<%= results[0].userid %>"><p><%= results[0].username %></p></a>
-                                                        <a class="brown" href="/topics/<%= results[0].topicid %>"><p><%= results[0].topicname %></p></a>
+                                                        <a class="brown mr-1" href="/users/<%= results[0][0].userid %>"><p><%= results[0][0].username %></p></a>
+                                                        <a class="brown mr-1" href="/topics/<%= results[0][0].topicid %>"><p><%= results[0][0].topicname %></p></a>
+                                                        <span><p><span id="commentscount"><%= results[2][0].commentscount %></span> Comments</p></span>
+
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -34,15 +37,40 @@
                                     </div>
 
                                     <% if (req.user === undefined) { %>
-                                    <% } else if (req.user.id !== results[0].userid) { %>
+                                    <% } else if (req.user.id !== results[0][0].userid) { %>
 
                                     <% } else { %>
                                     <div class="et_pb_button_module_wrapper et_pb_button_2_wrapper et_pb_button_alignment_center et_pb_module flex justify">
-                                        <a class="submit-button mr-1" href="/posts/<%= results[0].id %>/edit">Edit</a>
-                                        <form action="/posts/<%= results[0].id %>?_method=DELETE" method="post">
+                                        <a class="submit-button mr-1" href="/posts/<%= results[0][0].id %>/edit">Edit</a>
+                                        <form action="/posts/<%= results[0][0].id %>?_method=DELETE" method="post">
                                             <button type="submit" class="submit-button">Delete</button>
                                         </form>
                                     </div>
+                                    <% } %>
+
+
+                                    <% if (results[1].length > 0) { %>
+                                    <div id="container">
+                                            <% for(var i=0; i < results[1].length; i++) { %>
+                                            <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none container-item" style="">
+                                                <div class="et_pb_blurb_content">
+
+                                                    <div class="et_pb_blurb_container">
+                                                        <a href="/comments/<%= results[1][i].id %>"><h4 class="et_pb_module_header"><%= results[1][i].description %></h4></a>
+                                                        <div class="et_pb_blurb_description">
+
+                                                            <a href="/users/<%= results[1][i].userid %>"><h4 class="et_pb_module_header"><%= results[1][i].username %></h4></a>
+                                                            <p><strong><%= moment(results[1][i].datecreated).format('LLL') %></strong></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% } %>
+                                    </div>
+
+                                        <div id="loadMore">
+                                        </div>
+
                                     <% } %>
 
 
@@ -61,6 +89,8 @@
 
 </div>
 
-
+<% if (results[1].length > 0) { %>
+<script src="/javascripts/postloadmorecomments.js"></script>
+<% } %>
 
 <% include ../partials/footer %>

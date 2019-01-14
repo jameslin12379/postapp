@@ -99,6 +99,9 @@ function isResource(req, res, next) {
     if (uri.includes('/')){
         uri = uri.substring(0, uri.lastIndexOf('/'));
     }
+    if (uri.includes('?')){
+        uri = uri.substring(0, uri.lastIndexOf('?'));
+    }
     uri = uri.substring(0, uri.length - 1);
     let table = uri;
     let resourceid = req.params.id;
@@ -521,13 +524,15 @@ router.post('/posts', isAuthenticated, upload.single('file'), [
 router.get('/posts/:id', isResource, function(req, res){
     connection.query('select p.id, p.name, p.description, p.imageurl, p.datecreated, p.userid, p.topicid, ' +
         'u.username, t.name as topicname from post as p inner join user as u on p.userid = u.id inner join topic as t on p.topicid = t.id where p.id = ?' +
-        '; SELECT id, description, datecreated, userid FROM comment as c inner join WHERE userid = ? ORDER BY datecreated DESC LIMIT 10;SELECT count(*) as commentscount FROM comment WHERE postid = ?;', [req.params.id, req.params.id], function (error, results, fields) {
+        '; SELECT c.id, c.description, c.datecreated, c.userid, u.username FROM comment as c inner join user as u on ' +
+        'c.userid = u.id WHERE c.postid = ? ORDER BY c.datecreated DESC LIMIT 10;SELECT count(*) as commentscount FROM comment WHERE postid = ?;', [req.params.id, req.params.id, req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
         // fields will contain information about the returned results fields (if any)
         if (error) {
             throw error;
         }
+        console.log(results);
         res.render('posts/show', {
             req: req,
             results: results,
@@ -535,6 +540,19 @@ router.get('/posts/:id', isResource, function(req, res){
             moment: moment,
             alert: req.flash('alert')
         });
+    });
+});
+
+router.get('/posts/:id/comments', isResource, function(req, res){
+
+    connection.query('SELECT c.id, c.description, c.datecreated, c.userid, u.username FROM comment as c inner join user as u on c.userid = u.id WHERE c.postid = ? ORDER BY c.datecreated DESC LIMIT 10 OFFSET ?', [req.params.id, Number(req.query.skip)], function (error, results, fields) {
+        // error will be an Error if one occurred during the query
+        // results will contain the results of the query
+        // fields will contain information about the returned results fields (if any)
+        if (error) {
+            throw error;
+        }
+        res.status(200).json({ results: results });
     });
 });
 

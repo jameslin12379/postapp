@@ -66,6 +66,15 @@
       - /posts/id/edit GET x
       - /posts/id PUT x
       - /posts/id DELETE x
+      comment
+      - /comments/new GET (Replaced by form within post page)
+      - /comments POST (Replaced by ajax post)
+      - /comments/id GET
+      - /comments GET (Disabled)
+      - /comments/id/edit GET (Disabled)
+      - /comments/id PUT (Disabled)
+      - /comments/id DELETE
+
       topic
       - /topics/new GET (Disabled)
       - /topics POST (Disabled)
@@ -83,14 +92,7 @@
       - /topicfollowings/id/edit GET (Disabled)
       - /topicfollowings/id PUT (Disabled)
       - /topicfollowings/id DELETE
-      comment
-      - /comments/new GET (Replaced by form within post page)
-      - /comments POST (Replaced by ajax post)
-      - /comments/id GET
-      - /comments GET (Disabled)
-      - /comments/id/edit GET (Disabled)
-      - /comments/id PUT (Disabled)
-      - /comments/id DELETE
+
       upvote
 
       other routes

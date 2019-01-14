@@ -156,5 +156,21 @@ function getmorecommentsforuser(num){
 });
 }
 
+function getmorecommentsforpost(num){
+        let values = [];
+        for (let i = 0; i < 300; i++) {
+                let randomDescription = faker.lorem.paragraph();
+                let randomUserid = 10;
+                let randomPostid = num;
+                values.push([randomDescription,randomUserid,randomPostid]);
+    }
+    connection.query('INSERT INTO comment (description,userid,postid) VALUES ?', [values], function(error, results, fields) {
+        if (error) throw error;
+        console.log('saved');
+        connection.end();
+});
+}
+
 //getmorepostsforuser(81880)
-getmorecommentsforuser(81880)
+//getmorecommentsforuser(81880)
+getmorecommentsforpost(100096)

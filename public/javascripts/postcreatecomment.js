@@ -8,14 +8,7 @@
 // return it to client along with failed = false and
 // using if conditional toggle error message so it is hidden again
 // , clear textarea, and insert a comment using returned data row
-// into DOM at the top of comments list
-
-
-// error plus
-// old input back to client and display hidden error message and update
-// text area value with previous input
-// else insert a new row into DB and return json data
-// and append new comment into beginning of comment list
+// into DOM at the top of comments list and increment post comments count by 1
 
 let commentform = document.getElementById('commentform');
 let commentformurl = '/comments';
@@ -24,7 +17,8 @@ let commentformtextarea = document.getElementById('commentformtextarea');
 let commentformerrors = document.getElementsByClassName('commentformerrors');
 let emptyerror = document.getElementById('emptyerror');
 let lengtherror = document.getElementById('lengtherror');
-const container = document.querySelector('#container');
+let commentscount = document.getElementById('commentscount');
+
 
 commentform.addEventListener('submit', (e)=> {
     e.preventDefault();
@@ -35,7 +29,7 @@ commentform.addEventListener('submit', (e)=> {
         body: JSON.stringify({description: description, postid: commentformpostid})
     }).then(response => response.json()).then(result => {
             if (!result.status) {
-                for (var i = 0; i < result.errors.length; i++) {
+                for (let i = 0; i < result.errors.length; i++) {
                     if (result.errors[i].msg === "Empty description.") {
                         emptyerror.classList.remove('hidden');
                     }
@@ -45,8 +39,10 @@ commentform.addEventListener('submit', (e)=> {
                 }
             }
             else {
+                    commentscount.innerText = (Number(commentscount.innerText) + 1) + '';
+                    emptyerror.classList.add('hidden');
+                    lengtherror.classList.add('hidden');
                     commentformtextarea.value = '';
-                    commentformerrors.classList.add('hidden');
                     const div = document.createElement('div');
                     div.classList.add("et_pb_module");
                     div.classList.add("et_pb_blurb");

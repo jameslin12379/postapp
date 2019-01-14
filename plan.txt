@@ -67,10 +67,10 @@
       - /posts/id PUT x
       - /posts/id DELETE x
       comment
-      - /comments/new GET (Replaced by form within post page)
-      - /comments POST (Replaced by ajax post)
+      - /comments/new GET (Replaced by form within post page) x
+      - /comments POST (Replaced by ajax post) x
       - Creating comments is open to logged in users only
-      - /comments/id GET
+      - /comments/id GET x
       - /comments GET (Disabled)
       - /comments/id/edit GET (Disabled)
       - /comments/id PUT (Disabled)

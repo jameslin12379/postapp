@@ -15,7 +15,7 @@
                                     </div>
                                     <% } %>
 
-                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none" style="">
+                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left box-shadow-none" style="">
                                         <div class="et_pb_blurb_content">
                                             <div class="et_pb_blurb_container">
                                                 <a href="/posts/<%= results[0][0].id %>"><h4 class="et_pb_module_header"><%= results[0][0].name %></h4></a>
@@ -27,8 +27,15 @@
                                                     <div class="flex">
                                                         <a class="brown mr-1" href="/users/<%= results[0][0].userid %>"><p><%= results[0][0].username %></p></a>
                                                         <a class="brown mr-1" href="/topics/<%= results[0][0].topicid %>"><p><%= results[0][0].topicname %></p></a>
-                                                        <span><p><span id="commentscount"><%= results[2][0].commentscount %></span> Comments</p></span>
-
+                                                        <span class=" brown mr-1"><p><span id="commentscount"><%= results[2][0].commentscount %></span> Comments</p></span>
+                                                        <% if (req.user === undefined) { %>
+                                                        <% } else if (req.user.id !== results[0][0].userid) { %>
+                                                        <% } else { %>
+                                                            <a class="brown mr-1" href="/posts/<%= results[0][0].id %>/edit">Edit</a>
+                                                                        <form action="/posts/<%= results[0][0].id %>?_method=DELETE" method="post">
+                                                                            <button type="submit" class="brown fs-100p bd-none">Delete</button>
+                                                                        </form>
+                                                        <% } %>
 
                                                     </div>
                                                 </div>
@@ -36,23 +43,7 @@
                                         </div>
                                     </div>
 
-                                    <% if (req.user === undefined) { %>
-                                    <% } else if (req.user.id !== results[0][0].userid) { %>
-                                    <% } else { %>
-                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none" style="">
-                                        <div class="et_pb_blurb_content">
 
-                                            <div class="et_pb_blurb_container">
-                                    <div class="et_pb_button_module_wrapper et_pb_button_2_wrapper et_pb_button_alignment_center et_pb_module flex justify">
-                                        <a class="submit-button mr-1" href="/posts/<%= results[0][0].id %>/edit">Edit</a>
-                                        <form action="/posts/<%= results[0][0].id %>?_method=DELETE" method="post">
-                                            <button type="submit" class="submit-button">Delete</button>
-                                        </form>
-                                    </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <% } %>
 
                                     <% if (req.isAuthenticated()) { %>
                                     <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none" style="">
@@ -79,7 +70,7 @@
                                     <% } %>
 
 
-                                    <% if (results[1].length > 0) { %>
+
                                     <div id="container">
                                             <% for(var i=0; i < results[1].length; i++) { %>
                                             <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none container-item" style="">
@@ -101,7 +92,7 @@
                                         <div id="loadMore">
                                         </div>
 
-                                    <% } %>
+
 
 
 
@@ -119,9 +110,9 @@
 
 </div>
 
-<% if (results[1].length > 0) { %>
+
 <script src="/javascripts/postloadmorecomments.js"></script>
-<% } %>
+
 
 <% if (req.isAuthenticated()) { %>
 <script src="/javascripts/postcreatecomment.js"></script>

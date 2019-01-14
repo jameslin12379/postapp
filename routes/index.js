@@ -699,7 +699,7 @@ router.post('/comments', isAuthenticated, [
                                 if (error) {
                                     throw error;
                                 }
-                                res.status(400).json({ status: true, comment: results2 });
+                                res.status(200).json({ status: true, comment: results2 });
                             });
 
                     });
@@ -709,6 +709,28 @@ router.post('/comments', isAuthenticated, [
         }
     }
 );
+
+// GET request for one Comment.
+router.get('/comments/:id', isResource, function(req, res){
+    connection.query('SELECT c.id, c.description, c.datecreated, c.userid, u.username FROM comment as c inner join user as u on c.userid = u.id WHERE c.id = ?', [req.params.id], function (error, results, fields) {
+        // error will be an Error if one occurred during the query
+        // results will contain the results of the query
+        // fields will contain information about the returned results fields (if any)
+        if (error) {
+            throw error;
+        }
+        console.log(results);
+        res.render('comments/show', {
+            req: req,
+            results: results,
+            title: 'Comment',
+            moment: moment,
+            alert: req.flash('alert')
+        });
+    });
+});
+
+
 
 /// TOPIC ROUTES ///
 // GET request for list of all Topic items.

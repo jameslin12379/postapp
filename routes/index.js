@@ -669,6 +669,47 @@ router.delete('/posts/:id', isResource, isAuthenticated, isOwnResource, function
     });
 });
 
+/// COMMENT ROUTES ///
+// POST request for creating COMMENT.
+router.post('/comments', isAuthenticated, [
+            body('description', 'Empty description.').not().isEmpty(),
+            body('description', 'Description must be between 5-300 characters.').isLength({min:5, max:300})
+        ],
+    (req, res) => {
+        const errors = validationResult(req);
+        let errorsarray = errors.array();
+        if (errorsarray.length !== 0) {
+            // There are errors. Render form again with sanitized values/errors messages.
+            // Error messages can be returned in an array using `errors.array()`.
+            res.status(400).json({ status: false, errors: errorsarray });
+        }
+        else {
+            sanitizeBody('description').trim().escape();
+            const description = req.body.description;
+            connection.query('INSERT INTO comment (description, userid, postid) VALUES ' +
+                        '(?, ?, ?)', [description, req.user.id, req.body.postid], function (error, results, fields) {
+                        // error will be an Error if one occurred during the query
+                        // results will contain the results of the query
+                        // fields will contain information about the returned results fields (if any)
+                        if (error) {
+                            throw error;
+                        }
+                        connection.query('SELECT c.id, c.description, c.datecreated, c.userid, u.username FROM comment as c inner join user as u on c.userid = u.id WHERE c.id = ?', [results.insertId],
+                            function (error2, results2, fields2){
+                                if (error) {
+                                    throw error;
+                                }
+                                res.status(400).json({ status: true, comment: results2 });
+                            });
+
+                    });
+                    // console.log("Upload Success", data.Location);
+
+
+        }
+    }
+);
+
 /// TOPIC ROUTES ///
 // GET request for list of all Topic items.
 router.get('/topics', function(req, res){

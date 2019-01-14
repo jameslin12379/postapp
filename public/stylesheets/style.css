@@ -64,6 +64,10 @@
     padding: 15px 0!important;
 }
 
+.pd-20 {
+    padding: 20px;
+}
+
 .fw-700 {
     font-weight: 700;
 }
@@ -440,3 +444,14 @@
     color: #2ea3f2!important;
 }
 
+.displayb {
+    display: block!important;
+}
+
+.floatr {
+    float: right;
+}
+
+.hidden {
+    display: none;
+}

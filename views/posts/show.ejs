@@ -38,13 +38,43 @@
 
                                     <% if (req.user === undefined) { %>
                                     <% } else if (req.user.id !== results[0][0].userid) { %>
-
                                     <% } else { %>
+                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none" style="">
+                                        <div class="et_pb_blurb_content">
+
+                                            <div class="et_pb_blurb_container">
                                     <div class="et_pb_button_module_wrapper et_pb_button_2_wrapper et_pb_button_alignment_center et_pb_module flex justify">
                                         <a class="submit-button mr-1" href="/posts/<%= results[0][0].id %>/edit">Edit</a>
                                         <form action="/posts/<%= results[0][0].id %>?_method=DELETE" method="post">
                                             <button type="submit" class="submit-button">Delete</button>
                                         </form>
+                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } %>
+
+                                    <% if (req.isAuthenticated()) { %>
+                                    <div class="et_pb_module et_pb_blurb et_pb_blurb_2 et_pb_bg_layout_light  et_pb_text_align_left  et_pb_blurb_position_left mb-30 box-shadow-none" style="">
+                                        <div class="et_pb_blurb_content">
+
+                                            <div class="et_pb_blurb_container displayb">
+                                        <form action="/comments" method="post" id="commentform">
+                                            <div id="emptyerror" class="et_pb_newsletter_result et_pb_newsletter_error show text-center mb-1 fs-18 red hidden commentformerrors">
+                                                Empty description
+                                            </div>
+                                            <div id="lengtherror" class="et_pb_newsletter_result et_pb_newsletter_error show text-center mb-1 fs-18 red hidden commentformerrors">
+                                                Description must be between 5-300 characters.
+                                            </div>
+                                        <div class="et_pb_newsletter_fields">
+                                            <p class="et_pb_newsletter_field et_pb_contact_field_last">
+                                                <textarea id="commentformtextarea" class="input width-100p pd-20 fs-20" placeholder="Description" name="description" rows="5" required></textarea>
+                                            </p>
+                                            <button class="submit-button floatr" type="submit" data-icon="">Comment</button>
+                                        </div>
+                                    </form>
+                                    </div>
+                                        </div>
                                     </div>
                                     <% } %>
 
@@ -91,6 +121,10 @@
 
 <% if (results[1].length > 0) { %>
 <script src="/javascripts/postloadmorecomments.js"></script>
+<% } %>
+
+<% if (req.isAuthenticated()) { %>
+<script src="/javascripts/postcreatecomment.js"></script>
 <% } %>
 
 <% include ../partials/footer %>

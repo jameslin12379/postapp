@@ -69,6 +69,7 @@
       comment
       - /comments/new GET (Replaced by form within post page)
       - /comments POST (Replaced by ajax post)
+      - Creating comments is open to logged in users only
       - /comments/id GET
       - /comments GET (Disabled)
       - /comments/id/edit GET (Disabled)

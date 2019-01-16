@@ -143,7 +143,7 @@ let count = document.getElementsByClassName('container-item').length;
 let total = Number(document.getElementById('upvotescount').innerText);
 let skip = count;
 let loading = false;
-const API_URL = window.location.hostname.includes("dev") ? `https://post67.com.dev/api/users/${userid}/upvotes` : `https://post67.com/api/users/${userid}/upvotes`;
+const API_URL = window.location.hostname.includes("dev") ? `https://www.post67.com.dev/api/users/${userid}/upvotes` : `https://www.post67.com/api/users/${userid}/upvotes`;
 
 document.addEventListener('scroll', () => {
     const rect = loadMore.getBoundingClientRect();

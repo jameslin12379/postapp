@@ -86,7 +86,7 @@ let total = Number(document.getElementById('followingcount').innerText);
 let skip = count;
 let limit = 10;
 let loading = false;
-const API_URL = window.location.hostname.includes("dev") ? `https://post67.com.dev/api/users/${userid}/following` : `https://post67.com/api/users/${userid}/following`;
+const API_URL = window.location.hostname.includes("dev") ? `https://www.post67.com.dev/api/users/${userid}/following` : `https://www.post67.com/api/users/${userid}/following`;
 
 document.addEventListener('scroll', () => {
     const rect = loadMore.getBoundingClientRect();

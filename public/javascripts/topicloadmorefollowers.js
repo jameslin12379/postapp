@@ -80,7 +80,7 @@ let count = document.getElementsByClassName('container-item').length;
 let total = Number(document.getElementById('topicfollowerscount').innerText);
 let skip = count;
 let loading = false;
-const API_URL = window.location.hostname.includes("dev") ? `https://post67.com.dev/api/topics/${topicid}/followers` : `https://post67.com/api/topics/${topicid}/followers`;
+const API_URL = window.location.hostname.includes("dev") ? `https://www.post67.com.dev/api/topics/${topicid}/followers` : `https://www.post67.com/api/topics/${topicid}/followers`;
 
 document.addEventListener('scroll', () => {
     const rect = loadMore.getBoundingClientRect();

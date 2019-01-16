@@ -10,7 +10,7 @@ let count = document.getElementsByClassName('container-item').length;
 let total = Number(document.getElementById('commentscount').innerText);
 let skip = count;
 let loading = false;
-const API_URL = window.location.hostname.includes("dev") ? `https://post67.com.dev/api/posts/${postid}/comments` : `https://post67.com/api/posts/${postid}/comments`;
+const API_URL = window.location.hostname.includes("dev") ? `https://www.post67.com.dev/api/posts/${postid}/comments` : `https://www.post67.com/api/posts/${postid}/comments`;
 
 document.addEventListener('scroll', () => {
     const rect = loadMore.getBoundingClientRect();

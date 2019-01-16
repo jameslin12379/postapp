@@ -6,7 +6,7 @@
 const loadMore = document.querySelector('#loadMore');
 const container = document.querySelector('#container');
 const API_URL = window.location.hostname.includes("dev") ? 'https://api.post67.com.dev/posts' : 'https://api.post67.com/posts';
-let url = window.location.href;
+let url = window.location.pathname;
 const lastcharacter = url[url.length-1];
 if (lastcharacter === '/'){
     url = url.substring(0, url.length-1);

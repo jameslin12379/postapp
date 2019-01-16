@@ -74,28 +74,32 @@
       - /comments GET (Disabled)
       - /comments/id/edit GET (Disabled)
       - /comments/id PUT (Disabled)
-      - /comments/id DELETE
-
+      - /comments/id DELETE x
       topic
       - /topics/new GET (Disabled)
       - /topics POST (Disabled)
-      - /topics/id GET
-      - /topics GET
-      - /topics/id/followers GET
+      - /topics/id GET x
+      - /topics/id/followers GET x
+      - /topics GET x
       - /topics/id/edit GET (Disabled)
       - /topics/id PUT (Disabled)
       - /topics/id DELETE (Disabled)
       topicfollowing
-      - /topicfollowings/new GET (Replaced by follow button on topic page)
-      - /topicfollowings POST
+      - /topicfollowings/new GET (Replaced by follow button on topic page) x
+      - /topicfollowings POST (Replaced by ajax post) x
       - /topicfollowings/id GET (Disabled)
       - /topicfollowings GET (Disabled)
       - /topicfollowings/id/edit GET (Disabled)
       - /topicfollowings/id PUT (Disabled)
-      - /topicfollowings/id DELETE
-
+      - /topicfollowings/id DELETE x
       upvote
-
+       - /upvotes/new GET (Replaced by upvote button on post page) x
+       - /upvotes POST (Replaced by ajax post) x
+       - /upvotes/id GET (Disabled)
+       - /upvotes GET (Disabled)
+       - /upvotes/id/edit GET (Disabled)
+       - /upvotes/id PUT (Disabled)
+       - /upvotes/id DELETE x
       other routes
       - / GET x
       - /login GET x

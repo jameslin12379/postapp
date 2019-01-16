@@ -1,47 +1,133 @@
-const loadMoreElement = document.querySelector('#loadMore');
-const galleryElement = document.querySelector('#gallery');
-const API_URL = window.location.hostname.includes("dev") ? 'https://api.gif67.com.dev/topicfollowings' : 'https://api.gif67.com/topicfollowings';
-const API_URL2 = window.location.hostname.includes("dev") ? 'https://api.gif67.com.dev/users' : 'https://api.gif67.com/users';
+// const loadMore = document.querySelector('#loadMore');
+// const container = document.querySelector('#container');
+// const API_URL = window.location.hostname.includes("dev") ? 'https://api.post67.com.dev/topicfollowings' : 'https://api.post67.com/topicfollowings';
+// const API_URL2 = window.location.hostname.includes("dev") ? 'https://api.post67.com.dev/topics' : 'https://api.post67.com/topics';
+// let url = window.location.href;
+// const lastcharacter = url[url.length-1];
+// if (lastcharacter === '/'){
+//     url = url.substring(0, url.length-1);
+// }
+// url = url.substring(0, url.lastIndexOf('/'));
+// let userid = url.substring(url.lastIndexOf('/')+1);
+// let count = document.getElementsByClassName('container-item').length;
+// let total = Number(document.getElementById('followingcount').innerText);
+// let skip = count;
+// let limit = 10;
+// let loading = false;
+//
+// document.addEventListener('scroll', () => {
+//     const rect = loadMore.getBoundingClientRect();
+//     if (rect.top < window.innerHeight && !loading) {
+//         loading = true;
+//         if (count < total) {
+//             fetch(`${API_URL}?filter[fields][followed]=true&filter[where][following]=${userid}&filter[order]=datecreated%20DESC&filter[limit]=${limit}&filter[skip]=${skip}`).then(response => response.json())
+//                 .then(result => {
+//                     let topicids = [];
+//                     for (let i = 0; i < result.length; i++) {
+//                         topicids.push(result[i].followed);
+//                     }
+//                     fetch(`${API_URL2}?filter={"where":{"id":{"inq":[${topicids}]}}}`).then(response => response.json())
+//                         .then(r => {
+//                             r.forEach(topic => {
+//                                 const div = document.createElement('div');
+//                                 div.classList.add("et_pb_module");
+//                                 div.classList.add("et_pb_blurb");
+//                                 div.classList.add("et_pb_blurb_2");
+//                                 div.classList.add("et_pb_bg_layout_light");
+//                                 div.classList.add("et_pb_text_align_left");
+//                                 div.classList.add("et_pb_blurb_position_left");
+//                                 div.classList.add("mb-30");
+//                                 div.classList.add("box-shadow-none");
+//                                 div.classList.add("container-item");
+//                                 const div2 = document.createElement('div');
+//                                 div2.classList.add("et_pb_blurb_content");
+//                                 const div3 = document.createElement('div');
+//                                 div3.classList.add("et_pb_blurb_container");
+//                                 const link = document.createElement('a');
+//                                 link.setAttribute("href", `/topics/${topic.id}`);
+//                                 const h4 = document.createElement('h4');
+//                                 h4.classList.add("et_pb_module_header");
+//                                 h4.innerText = topic.name;
+//                                 const div4 = document.createElement('div');
+//                                 div4.classList.add("et_pb_blurb_description");
+//                                 const i = document.createElement('img');
+//                                 i.setAttribute("src", topic.imageurl);
+//                                 div.appendChild(div2);
+//                                 div2.appendChild(div3);
+//                                 div3.appendChild(link);
+//                                 link.appendChild(h4);
+//                                 div3.appendChild(div4);
+//                                 div4.appendChild(i);
+//                                 container.appendChild(div);
+//                             });
+//                             count = document.getElementsByClassName('container-item').length;
+//                             skip = count;
+//                             loading = false;
+//                         });
+//                 });
+//         }}});
 
-const url = window.location.href;
-const first = url.substring(0, url.lastIndexOf('/'));
-const topicid = first.substring(first.lastIndexOf('/')+1);
-let count = document.getElementsByClassName('gallery-item').length;
-const total = Number(document.getElementById('count').getAttribute('data-count'));
+const loadMore = document.querySelector('#loadMore');
+const container = document.querySelector('#container');
+let url = window.location.pathname;
+const lastcharacter = url[url.length-1];
+if (lastcharacter === '/'){
+    url = url.substring(0, url.length-1);
+}
+url = url.substring(0, url.lastIndexOf('/'));
+let topicid = url.substring(url.lastIndexOf('/')+1);
+let count = document.getElementsByClassName('container-item').length;
+let total = Number(document.getElementById('topicfollowerscount').innerText);
 let skip = count;
-let limit = 12;
+let loading = false;
+const API_URL = window.location.hostname.includes("dev") ? `https://post67.com.dev/api/topics/${topicid}/followers` : `https://post67.com/api/topics/${topicid}/followers`;
 
 document.addEventListener('scroll', () => {
-    const rect = loadMoreElement.getBoundingClientRect();
-    if (rect.top < window.innerHeight) {
+    const rect = loadMore.getBoundingClientRect();
+    if (rect.top < window.innerHeight && !loading) {
+        loading = true;
         if (count < total) {
-            fetch(`${API_URL}?filter[fields][following]=true&filter[where][followed]=${topicid}
-    &filter[order]=datecreated%20DESC&filter[limit]=${limit}&filter[skip]=${skip}`).then(response => response.json())
-                .then(result => {
-                    let userids = [];
-                    for(let i = 0; i <result.length; i++){
-                        userids.push(result[i].following);
-                    }
-                    fetch(`${API_URL2}?filter={"where":{"id":{"inq":[${userids}]}}}`).then(response => response.json())
-                        .then(r => {
-                            r.forEach(user => {
-                                const div = document.createElement('div');
-                                div.classList.add("gallery-item");
-                                const link = document.createElement('a');
-                                link.classList.add(["gallery-item-a", "mr-none"]);
-                                link.setAttribute("href", `/users/${user.id}`);
-                                const i = document.createElement('img');
-                                i.classList.add(["gallery-item-img"]);
-                                i.setAttribute("src", user.imageurl);
-                                i.setAttribute("alt", "");
-                                link.appendChild(i);
-                                div.appendChild(link);
-                                galleryElement.appendChild(div);
-                            });
-                        });
+            fetch(API_URL + `?skip=${skip}`).then(response => response.json()).then(result => {
+                result = result.results;
+                result.forEach(user => {
+                    const div = document.createElement('div');
+                    div.classList.add("et_pb_module");
+                    div.classList.add("et_pb_blurb");
+                    div.classList.add("et_pb_blurb_2");
+                    div.classList.add("et_pb_bg_layout_light");
+                    div.classList.add("et_pb_text_align_left");
+                    div.classList.add("et_pb_blurb_position_left");
+                    div.classList.add("mb-30");
+                    div.classList.add("box-shadow-none");
+                    div.classList.add("container-item");
+                    const div2 = document.createElement('div');
+                    div2.classList.add("et_pb_blurb_content");
+                    const div3 = document.createElement('div');
+                    div3.classList.add("et_pb_blurb_container");
+                    const link = document.createElement('a');
+                    link.setAttribute("href", `/users/${user.id}`);
+                    const h4 = document.createElement('h4');
+                    h4.classList.add("et_pb_module_header");
+                    h4.innerText = user.username;
+                    const div4 = document.createElement('div');
+                    div4.classList.add("et_pb_blurb_description");
+                    const i = document.createElement('img');
+                    i.setAttribute("src", user.imageurl);
+                    i.classList.add("width-100");
+                    div.appendChild(div2);
+                    div2.appendChild(div3);
+                    div3.appendChild(link);
+                    link.appendChild(h4);
+                    div3.appendChild(div4);
+                    div4.appendChild(i);
+                    container.appendChild(div);
                 });
-            count = document.getElementsByClassName('gallery-item').length;
-            skip = count;
+                count = document.getElementsByClassName('container-item').length;
+                skip = count;
+                loading = false;
+            });
         }
     }
 });
+
+

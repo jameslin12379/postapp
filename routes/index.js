@@ -102,6 +102,9 @@ function isResource(req, res, next) {
     if (uri.includes('?')){
         uri = uri.substring(0, uri.lastIndexOf('?'));
     }
+    if (uri.includes('api/')){
+        uri = uri.substring(4);
+    }
     uri = uri.substring(0, uri.length - 1);
     let table = uri;
     let resourceid = req.params.id;
@@ -279,6 +282,19 @@ router.get('/users/:id/following', isResource, function(req, res){
         });
 });
 
+router.get('/api/users/:id/following', isResource, function(req, res){
+    connection.query('SELECT t.id, t.name, t.imageurl from topicfollowing as tf inner join topic as t on tf.followed = t.id where tf.following = ? ORDER BY tf.datecreated DESC LIMIT 10 OFFSET ?',
+        [req.params.id, Number(req.query.skip)], function (error, results, fields) {
+            // error will be an Error if one occurred during the query
+            // results will contain the results of the query
+            // fields will contain information about the returned results fields (if any)
+            if (error) {
+                throw error;
+            }
+            res.status(200).json({ results: results });
+        });
+});
+
 /// GET request for user comments sorted by created date in descending order limit by 10
 router.get('/users/:id/comments', isResource, function(req, res){
     connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?;SELECT id, ' +
@@ -304,7 +320,7 @@ router.get('/users/:id/comments', isResource, function(req, res){
 
 /// GET request for user upvotes sorted by created date in descending order limit by 10
 router.get('/users/:id/upvotes', isResource, function(req, res){
-    connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?;SELECT p.id, p.id, p.name,' +
+    connection.query('SELECT id, username, description, imageurl, datecreated FROM user WHERE id = ?;SELECT p.id, p.name,' +
         'p.description, p.imageurl, p.datecreated from upvote as up inner join post as p on up.upvoted = p.id where up.upvote = ? ORDER BY up.datecreated DESC LIMIT 10; SELECT count(*) as postscount FROM post WHERE userid = ?; SELECT' +
         ' count(*) as followingcount FROM topicfollowing WHERE following = ?;SELECT count(*) as commentscount FROM comment WHERE userid = ?;' +
         'SELECT count(*) as upvotescount FROM upvote WHERE upvote = ?;',
@@ -322,6 +338,19 @@ router.get('/users/:id/upvotes', isResource, function(req, res){
                 moment: moment,
                 alert: req.flash('alert')
             });
+        });
+});
+
+router.get('/api/users/:id/upvotes', isResource, function(req, res){
+    connection.query('SELECT p.id, p.name,p.description, p.imageurl, p.datecreated from upvote as up inner join post as p on up.upvoted = p.id where up.upvote = ? ORDER BY up.datecreated DESC LIMIT 10'
+        ,[req.params.id], function (error, results, fields) {
+            // error will be an Error if one occurred during the query
+            // results will contain the results of the query
+            // fields will contain information about the returned results fields (if any)
+            if (error) {
+                throw error;
+            }
+        res.status(200).json({ results: results });
         });
 });
 
@@ -525,26 +554,49 @@ router.get('/posts/:id', isResource, function(req, res){
     connection.query('select p.id, p.name, p.description, p.imageurl, p.datecreated, p.userid, p.topicid, ' +
         'u.username, t.name as topicname from post as p inner join user as u on p.userid = u.id inner join topic as t on p.topicid = t.id where p.id = ?' +
         '; SELECT c.id, c.description, c.datecreated, c.userid, u.username FROM comment as c inner join user as u on ' +
-        'c.userid = u.id WHERE c.postid = ? ORDER BY c.datecreated DESC LIMIT 10;SELECT count(*) as commentscount FROM comment WHERE postid = ?;', [req.params.id, req.params.id, req.params.id], function (error, results, fields) {
+        'c.userid = u.id WHERE c.postid = ? ORDER BY c.datecreated DESC LIMIT 10;SELECT count(*) as commentscount FROM comment WHERE postid = ?;SELECT count(*) as upvotescount FROM upvote WHERE upvoted = ?;', [req.params.id, req.params.id, req.params.id, req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
         // fields will contain information about the returned results fields (if any)
         if (error) {
             throw error;
         }
-        console.log(results);
-        res.render('posts/show', {
-            req: req,
-            results: results,
-            title: 'Post',
-            moment: moment,
-            alert: req.flash('alert')
-        });
+        // console.log(results);
+        // res.render('posts/show', {
+        //     req: req,
+        //     results: results,
+        //     title: 'Post',
+        //     moment: moment,
+        //     alert: req.flash('alert')
+        // });
+        if (req.isAuthenticated()) {
+            connection.query('SELECT count(*) as status FROM upvote WHERE upvote = ? and upvoted = ?;', [req.user.id, req.params.id],
+                function (error, result, fields) {
+                    if (error) {
+                        throw error;
+                    }
+                    res.render('posts/show', {
+                        req: req,
+                        results: results,
+                        title: 'Post',
+                        result: result,
+                        moment: moment,
+                        alert: req.flash('alert')
+                    });
+                });
+        } else {
+            res.render('posts/show', {
+                req: req,
+                results: results,
+                title: 'Post',
+                moment: moment,
+                alert: req.flash('alert')
+            });
+        }
     });
 });
 
-router.get('/posts/:id/comments', isResource, function(req, res){
-
+router.get('/api/posts/:id/comments', isResource, function(req, res){
     connection.query('SELECT c.id, c.description, c.datecreated, c.userid, u.username FROM comment as c inner join user as u on c.userid = u.id WHERE c.postid = ? ORDER BY c.datecreated DESC LIMIT 10 OFFSET ?', [req.params.id, Number(req.query.skip)], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
@@ -555,7 +607,6 @@ router.get('/posts/:id/comments', isResource, function(req, res){
         res.status(200).json({ results: results });
     });
 });
-
 
 // GET request to update Post.
 router.get('/posts/:id/edit', isResource, isAuthenticated, isOwnResource, function(req, res){
@@ -654,7 +705,6 @@ router.put('/posts/:id', isResource, isAuthenticated, isOwnResource, upload.sing
     }
 });
 
-
 // DELETE request to delete Post.
 router.delete('/posts/:id', isResource, isAuthenticated, isOwnResource, function(req, res){
     connection.query('DELETE FROM post WHERE id = ?', [req.params.id], function (error, results, fields) {
@@ -704,8 +754,6 @@ router.post('/comments', isAuthenticated, [
 
                     });
                     // console.log("Upload Success", data.Location);
-
-
         }
     }
 );
@@ -730,7 +778,19 @@ router.get('/comments/:id', isResource, function(req, res){
     });
 });
 
-
+// DELETE request to delete Comment.
+router.delete('/comments/:id', isResource, isAuthenticated, isOwnResource, function(req, res){
+    connection.query('DELETE FROM comment WHERE id = ?', [req.params.id], function (error, results, fields) {
+        // error will be an Error if one occurred during the query
+        // results will contain the results of the query
+        // fields will contain information about the returned results fields (if any)
+        if (error) {
+            throw error;
+        }
+        req.flash('alert', 'Comment deleted.');
+        res.redirect(`/users/${req.user.id}`);
+    });
+});
 
 /// TOPIC ROUTES ///
 // GET request for list of all Topic items.
@@ -742,7 +802,6 @@ router.get('/topics', function(req, res){
         if (error) {
             throw error;
         }
-        console.log(results);
         res.render('topics/index', {
             req: req,
             results: results,
@@ -755,9 +814,9 @@ router.get('/topics', function(req, res){
 // get topic information, get 10 images of the topic, if current user is logged in, check if he has
 // followed topic or not if yes pass unfollow to button value else pass follow to button value
 router.get('/topics/:id', isResource, function(req, res){
-    connection.query('SELECT id, name, description, datecreated, imageurl FROM `topic` WHERE id = ?; SELECT id, ' +
-        'imageurl FROM `image` WHERE topicid = ? ORDER BY datecreated DESC LIMIT 12; SELECT count(*) as imagescount ' +
-        'FROM image WHERE topicid = ?;SELECT count(*) as followerscount FROM topicfollowing WHERE followed = ?',
+    connection.query('SELECT id, name, description, imageurl, datecreated FROM `topic` WHERE id = ?; SELECT id, ' +
+        'name, description, imageurl, datecreated FROM post WHERE topicid = ? ORDER BY datecreated DESC LIMIT 10; SELECT count(*) as postscount ' +
+        'FROM post WHERE topicid = ?;SELECT count(*) as followerscount FROM topicfollowing WHERE followed = ?',
         [req.params.id, req.params.id, req.params.id, req.params.id],
         function (error, results, fields) {
             // error will be an Error if one occurred during the query
@@ -776,7 +835,7 @@ router.get('/topics/:id', isResource, function(req, res){
                             req: req,
                             results: results,
                             title: 'Topic',
-                            status: result[0].status,
+                            result: result,
                             moment: moment,
                             alert: req.flash('alert')
                         });
@@ -793,11 +852,11 @@ router.get('/topics/:id', isResource, function(req, res){
         });
 });
 
-/// GET request for topic followers sorted by created date in descending order limit by 12
+/// GET request for topic followers sorted by created date in descending order limit by 10
 router.get('/topics/:id/followers', isResource, function(req, res){
     connection.query('SELECT id, name, description, imageurl FROM `topic` WHERE id = ?; SELECT u.id, u.username, ' +
         'u.imageurl from topicfollowing as tf inner join user as u on tf.following = u.id where tf.followed = ? ' +
-        'ORDER BY tf.datecreated DESC LIMIT 12; SELECT count(*) as imagescount FROM image WHERE topicid = ?;' +
+        'ORDER BY tf.datecreated DESC LIMIT 10; SELECT count(*) as postscount FROM post WHERE topicid = ?;' +
         'SELECT count(*) as followerscount FROM topicfollowing WHERE followed = ?',
         [req.params.id, req.params.id, req.params.id, req.params.id], function (error, results, fields) {
         // error will be an Error if one occurred during the query
@@ -812,6 +871,18 @@ router.get('/topics/:id/followers', isResource, function(req, res){
             title: 'Topic followers',
             alert: req.flash('alert')
         });
+    });
+});
+
+router.get('/api/topics/:id/followers', isResource, function(req, res){
+    connection.query('SELECT u.id, u.username, u.imageurl from topicfollowing as tf inner join user as u on tf.following = u.id where tf.followed = ? ORDER BY tf.datecreated DESC LIMIT 10 OFFSET ?', [req.params.id, Number(req.query.skip)], function (error, results, fields) {
+        // error will be an Error if one occurred during the query
+        // results will contain the results of the query
+        // fields will contain information about the returned results fields (if any)
+        if (error) {
+            throw error;
+        }
+        res.status(200).json({ results: results });
     });
 });
 
@@ -841,27 +912,34 @@ router.delete('/topicfollowings', isAuthenticated, function(req, res) {
         }
         res.json({status: 'done'});
     });
-    // connection.query('SELECT following FROM topicfollowing WHERE id = ?', [req.params.id], function (error, results, fields) {
-    //     // error will be an Error if one occurred during the query
-    //     // results will contain the results of the query
-    //     // fields will contain information about the returned results fields (if any)
-    //     if (error) {
-    //         throw error;
-    //     }
-    //     const userid = results[0].following;
-    //     if (req.user.id !== userid) {
-    //         res.redirect('/403');
-    //     }
-    //     connection.query('DELETE FROM topicfollowing WHERE id = ?', [req.params.id], function (error, results, fields) {
-    //         // error will be an Error if one occurred during the query
-    //         // results will contain the results of the query
-    //         // fields will contain information about the returned results fields (if any)
-    //         if (error) {
-    //             throw error;
-    //         }
-    //         res.json({status: 'done'});
-    //     });
-    // });
+});
+
+/// UPVOTE ROUTES ///
+// POST request for creating Upvote.
+router.post('/upvotes', isAuthenticated, function(req, res) {
+    connection.query('INSERT INTO upvote (upvote, upvoted) VALUES (?, ?)', [req.user.id, req.body.postid], function (error, results, fields) {
+        // error will be an Error if one occurred during the query
+        // results will contain the results of the query
+        // fields will contain information about the returned results fields (if any)
+        if (error) {
+            throw error;
+        }
+        // console.log(results);
+        // res.json({tfid: results.insertId});
+        res.status(200).json({status: 'done'});
+    });
+});
+
+router.delete('/upvotes', isAuthenticated, function(req, res) {
+    connection.query('DELETE FROM upvote WHERE upvote = ? and upvoted = ?', [req.user.id, req.body.postid], function (error, results, fields) {
+        // error will be an Error if one occurred during the query
+        // results will contain the results of the query
+        // fields will contain information about the returned results fields (if any)
+        if (error) {
+            throw error;
+        }
+        res.status(200).json({status: 'done'});
+    });
 });
 
 /// LOGIN ROUTES ///

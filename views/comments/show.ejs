@@ -19,6 +19,13 @@
 
                                                         <a href="/users/<%= results[0].userid %>"><h4 class="et_pb_module_header"><%= results[0].username %></h4></a>
                                                         <p><strong><%= moment(results[0].datecreated).format('LLL') %></strong></p>
+                                                        <% if (req.user === undefined) { %>
+                                                        <% } else if (req.user.id !== results[0].userid) { %>
+                                                        <% } else { %>
+                                                        <form action="/comments/<%= results[0].id %>?_method=DELETE" method="post">
+                                                            <button type="submit" class="brown fs-100p bd-none pd-none">Delete</button>
+                                                        </form>
+                                                        <% } %>
                                                     </div>
                                                 </div>
                                             </div>

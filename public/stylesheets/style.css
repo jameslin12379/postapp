@@ -68,6 +68,10 @@
     padding: 20px;
 }
 
+.pd-none {
+    padding: 0;
+}
+
 .fw-700 {
     font-weight: 700;
 }

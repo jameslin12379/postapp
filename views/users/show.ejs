@@ -28,7 +28,7 @@
                                                     </div>
                                                     <div class="grid mza w-25 pb-14">
                                                         <a class="brown" href="/users/<%= results[0][0].id %>/comments"><p><%= results[4][0].commentscount %> Comments</p></a>
-                                                        <a class="brown" href="/users/<%= results[0][0].id %>/upvotes"><p><%= results[5][0].upvotescount %> Upvotes</p></a>
+                                                        <a class="brown" href="/users/<%= results[0][0].id %>/upvotes"><p><%= results[5][0].upvotescount %> Likes</p></a>
                                                     </div>
                                                     <p class="mza w-60"><%= results[0][0].description %></p>
                                                 </div>
@@ -51,7 +51,7 @@
 
                         </div>
 
-                        <% if (results[1].length > 0) { %>
+
                         <div class="et_pb_section et_pb_section_1 et_section_specialty pt-none">
                             <div class="et_pb_row" id="container">
                                 <% for(var i=0; i < results[1].length; i++) { %>
@@ -74,7 +74,7 @@
                             <div id="loadMore">
                             </div>
                         </div>
-                        <% } %>
+
                         </div>
 
                     </div>
@@ -84,8 +84,7 @@
 
 </div>
 
-<% if (results[1].length > 0) { %>
+
 <script src="/javascripts/userloadmoreposts.js"></script>
-<% } %>
 
 <% include ../partials/footer %>

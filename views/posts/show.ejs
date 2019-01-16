@@ -28,6 +28,16 @@
                                                         <a class="brown mr-1" href="/users/<%= results[0][0].userid %>"><p><%= results[0][0].username %></p></a>
                                                         <a class="brown mr-1" href="/topics/<%= results[0][0].topicid %>"><p><%= results[0][0].topicname %></p></a>
                                                         <span class=" brown mr-1"><p><span id="commentscount"><%= results[2][0].commentscount %></span> Comments</p></span>
+                                                        <span class=" brown mr-1"><p><span id="upvotescount"><%= results[3][0].upvotescount %></span> Likes</p></span>
+                                                        <% if (req.isAuthenticated()) { %>
+                                                            <button id="upvoteunupvote" class="brown fs-100p bd-none mr-1">
+                                                                <% if (result[0].status === 0) { %>
+                                                                Like
+                                                                <% } else { %>
+                                                                Liked
+                                                                <% } %>
+                                                            </button>
+                                                        <% } %>
                                                         <% if (req.user === undefined) { %>
                                                         <% } else if (req.user.id !== results[0][0].userid) { %>
                                                         <% } else { %>
@@ -116,6 +126,9 @@
 
 <% if (req.isAuthenticated()) { %>
 <script src="/javascripts/postcreatecomment.js"></script>
+<script src="/javascripts/postupvoteunupvote.js"></script>
+
 <% } %>
+
 
 <% include ../partials/footer %>

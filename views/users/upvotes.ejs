@@ -42,7 +42,6 @@
 
                         </div>
 
-                        <% if (results[1].length > 0) { %>
                         <div class="et_pb_section et_pb_section_1 et_section_specialty pt-none">
                             <div class="et_pb_row" id="container">
                                 <% for(var i=0; i < results[1].length; i++) { %>
@@ -65,7 +64,6 @@
                             <div id="loadMore">
                             </div>
                         </div>
-                        <% } %>
                     </div>
 
                 </div>
@@ -75,8 +73,7 @@
 
 </div>
 
-<% if (results[1].length > 0) { %>
+
 <script src="/javascripts/userloadmoreupvotes.js"></script>
-<% } %>
 
 <% include ../partials/footer %>

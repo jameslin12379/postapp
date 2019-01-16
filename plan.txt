@@ -133,7 +133,7 @@ controllers, models, views)
 
 3.5
 - Define a VPC locally consisting of Nginx web server at ports 80 and 443,
-Nodejs server at port 3001 for application, Nodejs server at port 3002 for API,
+Nodejs server at port 3000 for application, Nodejs server at port 3001 for API,
 and DBMS server at port 3306
 - Make sure the components are working together
 - Test application
@@ -141,7 +141,7 @@ and DBMS server at port 3306
 
 4. Setup production environment
 4.1 Setup AWS account
-4.2 Purchase domains from Route 53 (www.gif67.com and api.gif67.com)
+4.2 Purchase domains from Route 53 (www.post67.com and api.post67.com)
  and link them to public IP (get an elastic IP and
  associate it with an EC2 instance)
 4.3 Setup VPC through wizard consisting of public and private subnets
